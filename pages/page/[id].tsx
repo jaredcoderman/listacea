@@ -2,36 +2,33 @@ import React from "react"
 import { GetServerSideProps } from "next"
 import ReactMarkdown from "react-markdown"
 import Layout from "../../components/Layout"
-import { PostProps } from "../../components/Post"
+import { TodoProps } from "../../components/Todo"
+import prisma from '../../lib/prisma';
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const post = {
-    id: "1",
-    title: "Prisma is the perfect ORM for Next.js",
-    content: "[Prisma](https://github.com/prisma/prisma) and Next.js go _great_ together!",
-    published: false,
-    author: {
-      name: "Nikolas Burk",
-      email: "burk@prisma.io",
+  const todo = await prisma.todo.findUnique({
+    where: {
+      id: Number(params?.id),
     },
-  }
+    include: {
+      user: {
+        select: { name: true },
+      },
+    },
+  });
   return {
-    props: post,
-  }
-}
+    props: todo,
+  };
+};
 
-const Post: React.FC<PostProps> = (props) => {
-  let title = props.title
-  if (!props.published) {
-    title = `${title} (Draft)`
-  }
+const Todo: React.FC<TodoProps> = (props) => {
+  let name = props.name
 
   return (
     <Layout>
       <div>
-        <h2>{title}</h2>
-        <p>By {props?.author?.name || "Unknown author"}</p>
-        <ReactMarkdown children={props.content} />
+        <h2>{name}</h2>
+        <p>By {props?.user?.name || "Unknown owner"}</p>
       </div>
       <style jsx>{`
         .page {
@@ -58,4 +55,4 @@ const Post: React.FC<PostProps> = (props) => {
   )
 }
 
-export default Post
+export default Todo
