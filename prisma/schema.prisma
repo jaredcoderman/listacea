@@ -14,7 +14,7 @@ datasource db {
 
 model Todo {
   id Int @id @default(autoincrement()) 
-  name String @unique
+  name String
   purchased Boolean @default(false)
   user User @relation(fields: [userId], references: [id])
   userId String

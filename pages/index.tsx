@@ -58,21 +58,28 @@ const Blog: React.FC<Props> = (props) => {
   }
 
   const fetchTasks = async() => {
-    const response = await fetch("/api/v1/todo", {
-      method: "GET",
-    })
-    const newTasks = await response.json()
-    let newPurchased = []
-    let newNotPurchased = []
-    for(let task of newTasks.todos) {
-      if(task.purchased) {
-        newPurchased.push(task)
-        continue
+    try {
+      const response = await fetch("/api/v1/todo", {
+        method: "GET",
+      })
+      if(response.status === 204) return
+      const newTasks = await response.json()
+      let newPurchased = []
+      let newNotPurchased = []
+      for(let task of newTasks.todos) {
+        if(task.purchased) {
+          newPurchased.push(task)
+          continue
+        }
+        newNotPurchased.push(task)
       }
-      newNotPurchased.push(task)
+      setPurchased([...newPurchased])
+      setNotPurchased([...newNotPurchased])
+    } catch(err) {
+      console.error(err)
     }
-    setPurchased([...newPurchased])
-    setNotPurchased([...newNotPurchased])
+
+
   }
 
   const updateLists = () => {
