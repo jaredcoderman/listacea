@@ -12,7 +12,7 @@ datasource db {
   shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING") // used for migrations
 }
 
-model Todo {
+model Item {
   id Int @id @default(autoincrement()) 
   name String
   purchased Boolean @default(false)
@@ -55,7 +55,7 @@ model User {
   email         String?@unique
   emailVerified DateTime?
   image         String?
-  todos         Todo[]
+  items         Item[]
   accounts      Account[]
   sessions      Session[]
 }

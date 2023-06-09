@@ -1,7 +1,7 @@
 export type UserProps = {
   id: string;
   name: string;
-  todos: {
+  items: {
     name: string;
   } | null;
   email: string;

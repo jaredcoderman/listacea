@@ -119,7 +119,7 @@ const Header: React.FC = () => {
       <div className="left">
         <Link href="/">
           <a className="bold" data-active={isActive('/')}>
-            Todos
+            GroceryHelper
           </a>
         </Link>
         <style jsx>{`
@@ -145,9 +145,7 @@ const Header: React.FC = () => {
     );
     right = (
       <div className="right">
-        <p>
-          {session.user.name} ({session.user.email})
-        </p>
+        <span>{session.user.name}</span>
         <button onClick={() => signOut()}>
           <a>Log out</a>
         </button>
@@ -158,10 +156,16 @@ const Header: React.FC = () => {
             display: inline-block;
           }
 
-          p {
+          span {
             display: inline-block;
             font-size: 13px;
             padding-right: 1rem;
+          }
+
+          @media only screen and (max-width: 800px) {
+            span {
+              display: none;
+            }
           }
 
           a + a {

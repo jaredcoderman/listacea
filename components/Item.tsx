@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import Router from "next/router";
 import ReactMarkdown from "react-markdown";
+import { Item } from "@prisma/client";
+import Image from "next/image";
 
-export type TodoProps = {
+export type ItemProps = {
   id: number;
   title: string;
   user: {
@@ -14,43 +16,52 @@ export type TodoProps = {
   updateLists: () => any;
 };
 
-const Todo: React.FC<{ todo: TodoProps }> = (props) => {
-  const { todo } = props
+const Item: React.FC<{ item: ItemProps }> = (props) => {
+  const { item } = props
   const handleComplete = async (event) => {
-    await fetch(`/api/v1/todo/${todo.id}`, {
+    await fetch(`/api/v1/item/${item.id}`, {
       method: "PATCH",
       headers: {'Content-Type': 'application/json'},
       credentials: "include"
     })
-    todo.updateLists()
+    item.updateLists()
   }
-  
   const handleDelete = (event) => {
     
   }
 
-  let checkbox = "🔲"
-  if(todo.purchased) {
-    checkbox = "☑️"
+  let checkbox = <img alt="" src="images/unchecked.png" className="button" onClick={handleComplete} width="17px"
+  height="17px"/>
+  if(item.purchased) {
+    checkbox = <img alt="" src="images/checkbox.png" onClick={handleComplete} width="17px"
+    height="17px"/>
   }
   return (
     <div> 
       <label>
-        {todo.name}
-        <button onClick={handleComplete}>{checkbox}</button>
-        <button onClick={handleDelete}>🗑️</button>
+        {item.name}
+        {checkbox}
+        <Image
+            src="/images/bin.png"
+            width="16px"
+            height="16px"
+            alt="Loading..."
+          />
       </label>
       
       <style jsx>{`
         div {
           color: inherit;
-            
           display: flex;
           flex-direction: column;
         }
 
         label {
           font-size: 16px;
+        }
+
+        .button:hover {
+          cursor: pointer;
         }
 
         button {
@@ -62,4 +73,4 @@ const Todo: React.FC<{ todo: TodoProps }> = (props) => {
   );
 };
 
-export default Todo;
+export default Item;

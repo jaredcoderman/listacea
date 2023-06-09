@@ -6,14 +6,14 @@ import { useRouter } from 'next/router';
 export default async function handle(req, res) {
   const session = await getServerSession(req, res, authOptions);
   const id = parseInt(req.query.id)
-  let todoToUpdate = await prisma.todo.findUnique({
+  let itemToUpdate = await prisma.item.findUnique({
     where: {
       id: id
     }
   })
-  if(!todoToUpdate) return res.json()
+  if(!itemToUpdate) return res.json()
   let update = async(bool: boolean) => {
-    await prisma.todo.update({
+    await prisma.item.update({
       where: {
         id: id
       },
@@ -23,7 +23,7 @@ export default async function handle(req, res) {
     })
   }
   if(req.method === "PATCH") {
-    if(!todoToUpdate.purchased) {
+    if(!itemToUpdate.purchased) {
       update(true)
       return res.json()
     } else {

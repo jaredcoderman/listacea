@@ -1,39 +1,9 @@
 import React, { useEffect, useState } from "react"
-import { GetServerSideProps } from "next"
 import Layout from "../components/Layout"
-import Todo, { TodoProps } from "../components/Todo"
-import { UserProps } from "../components/User"
-import prisma from "../lib/prisma"
-
-// export const getStaticProps: GetStaticProps = async () => {
-//   const feed = [
-//     {
-//       id: "3",
-//       name: "Working out 360 times this year!",
-//       completed: false,
-//       owner: {
-//         name: "Jared",
-//         email: "burk@prisma.io",
-//       },
-//     },
-//   ]
-//   return { 
-//     props: { feed }, 
-//     revalidate: 10 
-//   }
-// }
-
-// export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-//   const todos = await prisma.todo.findMany()
-
-//   return {
-//     props: { todos },
-//   };
-// };
-
+import Item, { ItemProps } from "../components/Item"
 
 type Props = {
-  todos: TodoProps[]
+  items: ItemProps[]
 }
 
 const Blog: React.FC<Props> = (props) => {
@@ -47,7 +17,7 @@ const Blog: React.FC<Props> = (props) => {
 
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault() 
-    await fetch('/api/v1/todo', {
+    await fetch('/api/v1/item', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({ item }),
@@ -59,14 +29,14 @@ const Blog: React.FC<Props> = (props) => {
 
   const fetchTasks = async() => {
     try {
-      const response = await fetch("/api/v1/todo", {
+      const response = await fetch("/api/v1/item", {
         method: "GET",
       })
       if(response.status === 204) return
       const newTasks = await response.json()
       let newPurchased = []
       let newNotPurchased = []
-      for(let task of newTasks.todos) {
+      for(let task of newTasks.items) {
         if(task.purchased) {
           newPurchased.push(task)
           continue
@@ -78,8 +48,6 @@ const Blog: React.FC<Props> = (props) => {
     } catch(err) {
       console.error(err)
     }
-
-
   }
 
   const updateLists = () => {
@@ -90,20 +58,20 @@ const Blog: React.FC<Props> = (props) => {
     fetchTasks()
   }, [])
 
-  let notPurchaseds = notPurchased.map(todo => {
-    todo.updateLists = updateLists
+  let notPurchaseds = notPurchased.map(item => {
+    item.updateLists = updateLists
     return (
-      <div key={todo.id} className="todo">
-        <Todo todo={todo} />
+      <div key={item.id} className="item">
+        <Item item={item} />
       </div>
     )
   })
 
-  let purchaseds = purchased.map(todo => {
-    todo.updateLists = updateLists
+  let purchaseds = purchased.map(item => {
+    item.updateLists = updateLists
     return (
-      <div key={todo.id} className="todo">
-        <Todo todo={todo} />
+      <div key={item.id} className="item">
+        <Item item={item} />
       </div>
     )
   })
@@ -119,23 +87,19 @@ const Blog: React.FC<Props> = (props) => {
             <input type="submit"/>
           </form>
           <div className="container">
-          <section>
-          <h2>To Purchase</h2>
-          {notPurchaseds}
-          </section>
-          <section>
-          <h2>Purchased</h2>
-          {purchased.map((todo) => (
-            <div key={todo.id} className="todo">
-              <Todo todo={todo} />
-            </div>
-          ))}
-          </section>
+            <section>
+              <h2>To Purchase</h2>
+              {notPurchaseds}
+            </section>
+            <section>
+              <h2>Purchased</h2>
+              {purchaseds}
+            </section>
           </div>
         </main>
       </div>
       <style jsx>{`
-        .todo + .todo {
+        .item + .item {
           margin-top: .5rem;
         }
         
@@ -144,13 +108,19 @@ const Blog: React.FC<Props> = (props) => {
           flex-direction: column;
         }
 
+        h1 {
+          text-align: center;
+        }
+
+        form {
+          margin-left: auto;
+          margin-right: auto;
+        }
+
         .container{
           display: flex;
           flex-direction: row;
-        }
-
-        section + section {
-          margin-left: 20%;
+          justify-content: space-around;
         }
 
         input[type="submit"] {
@@ -178,6 +148,7 @@ const Blog: React.FC<Props> = (props) => {
         input[name="task"]:focus {
           outline: none;
         }
+        
         label {
           font-size: 18px;
         }
