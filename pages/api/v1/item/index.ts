@@ -5,10 +5,11 @@ import { authOptions } from '../../auth/[...nextauth]';
 export default async function handle(req, res) {
   const session = await getServerSession(req, res, authOptions);
   if (req.method === "POST") {
-    const { item } = req.body;
+    const { item, category } = req.body;
     const result = await prisma.item.create({
       data: {
         name: item,
+        category: category,
         user: { connect: { email: session?.user?.email } }
       },
     });

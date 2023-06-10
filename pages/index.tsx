@@ -10,6 +10,7 @@ const Blog: React.FC<Props> = (props) => {
   const [item, setItem] = useState("")
   const [notPurchased, setNotPurchased] = useState([])
   const [purchased, setPurchased] = useState([])
+  const [category, setCategory] = useState("Fruit/Veg")
 
   const handleText = (event) => {
     setItem(event.target.value)
@@ -21,7 +22,7 @@ const Blog: React.FC<Props> = (props) => {
     await fetch('/api/v1/item', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ item }),
+      body: JSON.stringify({ item, category }),
       credentials: "include"
     })
     setItem("")
@@ -55,6 +56,10 @@ const Blog: React.FC<Props> = (props) => {
     fetchTasks()
   }
 
+  const handleSelect = (event) => {
+    setCategory(event.target.value)
+  }
+
   useEffect(() => {
     fetchTasks()
   }, [])
@@ -85,6 +90,17 @@ const Blog: React.FC<Props> = (props) => {
           <form onSubmit={handleSubmit}>
             <label htmlFor="task">New Item</label>
             <input name="task" type="text" onChange={handleText} value={item}/>
+            <select onChange={handleSelect}>
+              <option value="Fruit/Veg">Fruit/Veg</option>
+              <option value="Dairy">Dairy</option>
+              <option value="Bread/Pasta/Rice">Bread/Pasta/Rice</option>
+              <option value="Snacks">Snacks</option>
+              <option value="Home Products">Home Products</option>
+              <option value="Frozen">Frozen</option>
+              <option value="Fancy Cheese Area">Fancy Cheese Area</option>
+              <option value="Canned Stuff/Dressings">Canned Stuff/Dressings</option>
+              <option value="Condiments">Condiments</option>
+            </select>
             <input type="submit"/>
           </form>
           <div className="container">
@@ -124,6 +140,12 @@ const Blog: React.FC<Props> = (props) => {
           justify-content: space-around;
         }
 
+        select {
+          border-radius: 3px;
+          padding: 2px 4px;
+          background-color: transparent;
+        }
+
         input[type="submit"] {
           background-color: #E6E6E6;
           border: none;
@@ -134,6 +156,7 @@ const Blog: React.FC<Props> = (props) => {
           -webkit-appearance: none;
           padding: 4px 8px;
           color: black;
+          margin-left: .5rem;
         }
 
         input[type="submit"]:hover {
@@ -150,6 +173,7 @@ const Blog: React.FC<Props> = (props) => {
           border-radius: 0px;
           display: block;
           -webkit-appearance: none;
+          width: 100%;
 
         }
 
