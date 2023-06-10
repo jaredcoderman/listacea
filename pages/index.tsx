@@ -115,6 +115,7 @@ const Blog: React.FC<Props> = (props) => {
         form {
           margin-left: auto;
           margin-right: auto;
+          -webkit-appearance: none;
         }
 
         .container{
@@ -148,7 +149,7 @@ const Blog: React.FC<Props> = (props) => {
         input[name="task"]:focus {
           outline: none;
         }
-        
+
         label {
           font-size: 18px;
         }
