@@ -133,6 +133,7 @@ const Blog: React.FC<Props> = (props) => {
           border-radius: 5px;
           -webkit-appearance: none;
           padding: 4px 8px;
+          color: black;
         }
 
         input[type="submit"]:hover {
