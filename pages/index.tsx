@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import Layout from "../components/Layout"
 import Item, { ItemProps } from "../components/Item"
+import { useSession } from "next-auth/react"
 
 type Props = {
   items: ItemProps[]
@@ -12,13 +13,14 @@ const Blog: React.FC<Props> = (props) => {
   const [purchased, setPurchased] = useState([])
   const [category, setCategory] = useState("Fruit/Veg")
 
+  const { data: session, status } = useSession()
   const handleText = (event) => {
     setItem(event.target.value)
   }
 
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault() 
-    if(item === "") return
+    if(item === "" || status !== "authenticated") return
     await fetch('/api/v1/item', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -43,7 +45,11 @@ const Blog: React.FC<Props> = (props) => {
           newPurchased.push(task)
           continue
         }
-        newNotPurchased.push(task)
+        if(task.category === category) {
+          console.log(category)
+          console.log(task.category)
+          newNotPurchased.push(task)
+        }
       }
       setPurchased([...newPurchased])
       setNotPurchased([...newNotPurchased])
@@ -61,8 +67,9 @@ const Blog: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
+    console.log("Use effecting!")
     fetchTasks()
-  }, [])
+  }, [category])
 
   let notPurchaseds = notPurchased.map(item => {
     item.updateLists = updateLists
@@ -85,11 +92,11 @@ const Blog: React.FC<Props> = (props) => {
   return (
     <Layout>
       <div className="page">
-        <h1>Head Family Grocery List</h1>
+        <h1>Grocery List</h1>
         <main>
           <form onSubmit={handleSubmit}>
             <label htmlFor="task">New Item</label>
-            <input name="task" type="text" onChange={handleText} value={item}/>
+            <input placeholder="bread.." name="task" type="text" onChange={handleText} value={item}/>
             <select onChange={handleSelect}>
               <option value="Fruit/Veg">Fruit/Veg</option>
               <option value="Dairy">Dairy</option>
@@ -104,9 +111,11 @@ const Blog: React.FC<Props> = (props) => {
             <input type="submit"/>
           </form>
           <div className="container">
-            <section>
-              <h2>To Purchase</h2>
-              {notPurchaseds}
+            <section className="cat-container">
+              <div className="category">
+                <h2>{category}</h2>
+                {notPurchaseds}
+              </div>
             </section>
             <section>
               <h2>Purchased</h2>
@@ -118,6 +127,25 @@ const Blog: React.FC<Props> = (props) => {
       <style jsx>{`
         .item + .item {
           margin-top: .5rem;
+        }
+
+        .container{
+          display: flex;
+          flex-direction: row;
+          justify-content: space-around;
+          align-content: center;
+          margin-top: 5%;
+        }
+
+        .category {
+          margin-left: 3rem;
+        }
+
+        .cat-container {
+          display: flex;
+          flex-direction: row;
+          flex-wrap: wrap;
+          justify-content: space-between;
         }
         
         main {
@@ -134,16 +162,16 @@ const Blog: React.FC<Props> = (props) => {
           margin-right: auto;
         }
 
-        .container{
-          display: flex;
-          flex-direction: row;
-          justify-content: space-around;
-        }
-
         select {
           border-radius: 3px;
-          padding: 2px 4px;
           background-color: transparent;
+          -webkit-appearance: none;
+          padding-top: 2px;
+          padding-left: 6px;
+          padding-bottom: 3px;
+          color: black;
+          font-size: 16px !important;
+          border: black 1px solid
         }
 
         input[type="submit"] {
@@ -170,11 +198,13 @@ const Blog: React.FC<Props> = (props) => {
           border-top: none;
           border-left: none;
           border-right: none;
-          border-radius: 0px;
+          border-top-left-radius: 0px;
+          border-top-right-radius: 0px;
+          border-bottom-left-radius: 4px;
+          border-bottom-right-radius: 4px;
           display: block;
           -webkit-appearance: none;
           width: 100%;
-
         }
 
         input[name="task"]:focus {

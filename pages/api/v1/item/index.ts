@@ -15,9 +15,8 @@ export default async function handle(req, res) {
     });
     res.json(result);
   } else if(req.method === "GET") {
-    
     if(!session) {
-      res.status(204)
+      res.status(204).send()
     } else {
       const items = await prisma.item.findMany({
         where: {
@@ -27,7 +26,6 @@ export default async function handle(req, res) {
 
       res.json({ items: items})
     }
-    
   }
 
 }
