@@ -30,7 +30,7 @@ const Item: React.FC<{ item: ItemProps }> = (props) => {
     
   }
 
-  let checkbox = <img alt="" src="images/unchecked.png" className="button" onClick={handleComplete} width="17px"
+  let checkbox = <img alt="" src="images/unchecked.png" onClick={handleComplete} width="17px"
   height="17px"/>
   if(item.purchased) {
     checkbox = <img alt="" src="images/checkbox.png" onClick={handleComplete} width="17px"
@@ -40,13 +40,17 @@ const Item: React.FC<{ item: ItemProps }> = (props) => {
     <div> 
       <label>
         {item.name}
-        {checkbox}
+        <div className="checkbox-wrapper">
+          {checkbox}
+        </div>
+        <div className="bin-wrapper">
         <Image
             src="/images/bin.png"
             width="16px"
             height="16px"
             alt="Loading..."
           />
+        </div>
       </label>
       
       <style jsx>{`
@@ -56,12 +60,26 @@ const Item: React.FC<{ item: ItemProps }> = (props) => {
           flex-direction: column;
         }
 
+        .checkbox-wrapper{
+          display: inline;
+          cursor: pointer;
+          vertical-align: middle;
+          margin-left: 10px;
+        }
+
+        .bin-wrapper {
+          display: inline;
+          cursor: pointer;
+          vertical-align: middle;
+          display: none;
+        }
+
         label {
           font-size: 16px;
         }
 
-        .button:hover {
-          cursor: pointer;
+        img:hover {
+          cursor: pointer !important;
         }
 
         button {

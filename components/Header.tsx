@@ -146,7 +146,7 @@ const Header: React.FC = () => {
     right = (
       <div className="right">
         <span>{session.user.name}</span>
-        <button onClick={() => signOut()}>
+        <button className='button' onClick={() => signOut()}>
           <a>Log out</a>
         </button>
         <style jsx>{`
@@ -177,13 +177,16 @@ const Header: React.FC = () => {
           }
 
           .right a {
-            border: 1px solid var(--geist-foreground);
+            border: 1px solid #000;
             padding: 0.5rem 1rem;
+            
             border-radius: 3px;
           }
 
-          button {
+          .button {
             border: none;
+            color: #000;
+            background-color: transparent;
           }
         `}</style>
       </div>
