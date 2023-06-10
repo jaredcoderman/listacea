@@ -15,7 +15,7 @@ const Header: React.FC = () => {
     <div className="left">
       <Link href="/">
         <a className="bold" data-active={isActive('/')}>
-          Feed
+          GroceryList
         </a>
       </Link>
       <style jsx>{`
@@ -47,7 +47,7 @@ const Header: React.FC = () => {
       <div className="left">
         <Link href="/">
           <a className="bold" data-active={isActive('/')}>
-            Feed
+            GroceryList
           </a>
         </Link>
         <style jsx>{`
@@ -105,7 +105,7 @@ const Header: React.FC = () => {
           }
 
           .right a {
-            border: 1px solid var(--geist-foreground);
+            border: 1px solid #000;
             padding: 0.5rem 1rem;
             border-radius: 3px;
           }
@@ -119,7 +119,7 @@ const Header: React.FC = () => {
       <div className="left">
         <Link href="/">
           <a className="bold" data-active={isActive('/')}>
-            GroceryHelper
+            GroceryList
           </a>
         </Link>
         <style jsx>{`
