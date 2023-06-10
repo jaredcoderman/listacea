@@ -10,7 +10,6 @@ type Props = {
 const Blog: React.FC<Props> = (props) => {
   const [item, setItem] = useState("")
   const [notPurchased, setNotPurchased] = useState([])
-  const [purchased, setPurchased] = useState([])
   const [category, setCategory] = useState("Fruit/Veg")
 
   const { data: session, status } = useSession()
@@ -41,17 +40,10 @@ const Blog: React.FC<Props> = (props) => {
       let newPurchased = []
       let newNotPurchased = []
       for(let task of newTasks.items) {
-        if(task.purchased) {
-          newPurchased.push(task)
-          continue
-        }
         if(task.category === category) {
-          console.log(category)
-          console.log(task.category)
           newNotPurchased.push(task)
         }
       }
-      setPurchased([...newPurchased])
       setNotPurchased([...newNotPurchased])
     } catch(err) {
       console.error(err)
@@ -72,15 +64,6 @@ const Blog: React.FC<Props> = (props) => {
   }, [category])
 
   let notPurchaseds = notPurchased.map(item => {
-    item.updateLists = updateLists
-    return (
-      <div key={item.id} className="item">
-        <Item item={item} />
-      </div>
-    )
-  })
-
-  let purchaseds = purchased.map(item => {
     item.updateLists = updateLists
     return (
       <div key={item.id} className="item">
@@ -117,10 +100,6 @@ const Blog: React.FC<Props> = (props) => {
                 {notPurchaseds}
               </div>
             </section>
-            <section>
-              <h2>Purchased</h2>
-              {purchaseds}
-            </section>
           </div>
         </main>
       </div>
@@ -137,15 +116,10 @@ const Blog: React.FC<Props> = (props) => {
           margin-top: 5%;
         }
 
-        .category {
-          margin-left: 3rem;
-        }
-
         .cat-container {
           display: flex;
           flex-direction: row;
           flex-wrap: wrap;
-          justify-content: space-between;
         }
         
         main {
