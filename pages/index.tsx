@@ -17,6 +17,7 @@ const Blog: React.FC<Props> = (props) => {
 
   const handleSubmit = async (event: React.SyntheticEvent) => {
     event.preventDefault() 
+    if(item === "") return
     await fetch('/api/v1/item', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -115,7 +116,6 @@ const Blog: React.FC<Props> = (props) => {
         form {
           margin-left: auto;
           margin-right: auto;
-          -webkit-appearance: none;
         }
 
         .container{
@@ -125,11 +125,14 @@ const Blog: React.FC<Props> = (props) => {
         }
 
         input[type="submit"] {
-          background-color: rgba(0, 0, 0, 0.05);
+          background-color: #E6E6E6;
           border: none;
           margin-top: .5em;
           border-radius: 2px;
-          padding: 2px 4px;
+          font-size: 14px;
+          border-radius: 5px;
+          -webkit-appearance: none;
+          padding: 4px 8px;
         }
 
         input[type="submit"]:hover {
@@ -143,11 +146,15 @@ const Blog: React.FC<Props> = (props) => {
           border-top: none;
           border-left: none;
           border-right: none;
+          border-radius: 0px;
           display: block;
+          -webkit-appearance: none;
+
         }
 
         input[name="task"]:focus {
           outline: none;
+          -webkit-appearance: none;
         }
 
         label {
