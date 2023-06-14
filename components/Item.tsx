@@ -12,6 +12,7 @@ export type ItemProps = {
     email: string;
   } | null;
   purchased: boolean;
+  category: string;
   name: string;
   updateLists: () => any;
 };

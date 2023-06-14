@@ -23,7 +23,6 @@ export default async function handle(req, res) {
           user: session.user
         }
       })
-
       res.json({ items: items})
     }
   }

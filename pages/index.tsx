@@ -7,6 +7,10 @@ type Props = {
   items: ItemProps[]
 }
 
+type CategoryObject = {
+  [category: string]: ItemProps[];
+}
+
 const Blog: React.FC<Props> = (props) => {
   const [item, setItem] = useState("")
   const [notPurchased, setNotPurchased] = useState([])
@@ -37,14 +41,7 @@ const Blog: React.FC<Props> = (props) => {
       })
       if(response.status === 204) return
       const newTasks = await response.json()
-      let newPurchased = []
-      let newNotPurchased = []
-      for(let task of newTasks.items) {
-        if(task.category === category) {
-          newNotPurchased.push(task)
-        }
-      }
-      setNotPurchased([...newNotPurchased])
+      setNotPurchased([...newTasks.items])
     } catch(err) {
       console.error(err)
     }
@@ -59,7 +56,6 @@ const Blog: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    console.log("Use effecting!")
     fetchTasks()
   }, [category])
 
@@ -72,6 +68,42 @@ const Blog: React.FC<Props> = (props) => {
     )
   })
 
+  let categoriesObj: CategoryObject = {}
+  for (let item of notPurchased) {
+    if(!(item.category in categoriesObj)) {
+      categoriesObj[item.category] = [item]
+    } else {
+      categoriesObj[item.category].push(item)
+    }
+  }
+
+  let categoryLists = []
+  for(const [category, itemList] of Object.entries(categoriesObj)) {
+    let newList: (string|ItemProps)[] = [category]
+    for(let item of itemList) {
+      newList.push(item)
+    }
+    categoryLists.push(newList)
+  }
+  let elements = []
+  for(let list of categoryLists) {
+    let newList = [...list]
+    let thisCategory = newList.shift()
+    let mappedItems = newList.map(item => {
+      return(
+        <div key={item.id} className="item">
+          <Item item={item} />
+        </div>
+      )
+    })
+    elements.push(
+      <div className="category" key={elements.length}>
+        <h2>{thisCategory}</h2>
+        {mappedItems}
+      </div>
+    )
+  }
+  
   return (
     <Layout>
       <div className="page">
@@ -95,10 +127,7 @@ const Blog: React.FC<Props> = (props) => {
           </form>
           <div className="container">
             <section className="cat-container">
-              <div className="category">
-                <h2>{category}</h2>
-                {notPurchaseds}
-              </div>
+              {elements}
             </section>
           </div>
         </main>
@@ -118,7 +147,7 @@ const Blog: React.FC<Props> = (props) => {
 
         .cat-container {
           display: flex;
-          flex-direction: row;
+          flex-direction: column;
           flex-wrap: wrap;
         }
         
