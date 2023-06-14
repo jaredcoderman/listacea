@@ -44,7 +44,6 @@ const Item: React.FC<{ item: ItemProps }> = (props) => {
           {checkbox}
         </div>
         {item.name}
-
         <div className="bin-wrapper">
         <Image
             src="/images/bin.png"
@@ -66,7 +65,7 @@ const Item: React.FC<{ item: ItemProps }> = (props) => {
           display: inline;
           cursor: pointer;
           vertical-align: middle;
-          margin-left: 10px;
+          margin-right: 6px;
         }
 
         .bin-wrapper {
