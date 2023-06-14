@@ -85,6 +85,18 @@ const Blog: React.FC<Props> = (props) => {
     }
     categoryLists.push(newList)
   }
+  categoryLists.sort((a, b) => {
+    const firstElementA = a[0].toLowerCase();
+    const firstElementB = b[0].toLowerCase();
+  
+    if (firstElementA < firstElementB) {
+      return -1;
+    }
+    if (firstElementA > firstElementB) {
+      return 1;
+    }
+    return 0;
+  });
   let elements = []
   for(let list of categoryLists) {
     let newList = [...list]
