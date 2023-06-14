@@ -40,10 +40,11 @@ const Item: React.FC<{ item: ItemProps }> = (props) => {
   return (
     <div> 
       <label>
-        {item.name}
-        <div className="checkbox-wrapper">
+      <div className="checkbox-wrapper">
           {checkbox}
         </div>
+        {item.name}
+
         <div className="bin-wrapper">
         <Image
             src="/images/bin.png"

@@ -101,7 +101,15 @@ const Blog: React.FC<Props> = (props) => {
   for(let list of categoryLists) {
     let newList = [...list]
     let thisCategory = newList.shift()
-    let mappedItems = newList.map(item => {
+
+    let completedMap = newList.filter(item => item.purchased == true).map(item => {
+      return(
+        <div key={item.id} className="item">
+          <Item item={item} />
+        </div>
+      )
+    })
+    let notCompletedMap = newList.filter(item => item.purchased != true).map(item => {
       return(
         <div key={item.id} className="item">
           <Item item={item} />
@@ -111,7 +119,8 @@ const Blog: React.FC<Props> = (props) => {
     elements.push(
       <div className="category" key={elements.length}>
         <h2>{thisCategory}</h2>
-        {mappedItems}
+        {notCompletedMap}
+        {completedMap}
       </div>
     )
   }
