@@ -47,5 +47,12 @@ export default async function handle(req, res) {
       return res.json()
     }
   } 
+  if(req.method === "DELETE") {
+    await prisma.item.delete({
+      where: {
+        id: id
+      }
+    })
+  }
   return res.json()
 }

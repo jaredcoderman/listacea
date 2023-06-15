@@ -22,11 +22,21 @@ const Item: React.FC<{ item: ItemProps }> = (props) => {
   const { item } = props
   const [rename, setRename] = useState(item.name)
   const handleComplete = async (event) => {
-    await fetch(`/api/v1/item/${item.id}`, {
-      method: "PATCH",
-      headers: {'Content-Type': 'application/json'},
-      credentials: "include"
-    })
+    if(item.editing) {
+      let yes = confirm(`Are you sure you want to delete \"${item.name}\"?`)
+      if(!yes) return
+      await fetch(`/api/v1/item/${item.id}`, {
+        method: "DELETE",
+        headers: {'Content-Type': 'application/json'},
+        credentials: "include"
+      })
+    } else {
+      await fetch(`/api/v1/item/${item.id}`, {
+        method: "PATCH",
+        headers: {'Content-Type': 'application/json'},
+        credentials: "include"
+      })
+    }
     item.updateLists()
   }
 
