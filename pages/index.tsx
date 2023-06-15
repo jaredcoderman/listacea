@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import Layout from "../components/Layout"
 import Item, { ItemProps } from "../components/Item"
 import { useSession } from "next-auth/react"
+import Image from "next/image";
 
 type Props = {
   items: ItemProps[]
@@ -15,6 +16,7 @@ const Blog: React.FC<Props> = (props) => {
   const [item, setItem] = useState("")
   const [notPurchased, setNotPurchased] = useState([])
   const [category, setCategory] = useState("Fruit/Veg")
+  const [editing, setEditing] = useState(false)
 
   const { data: session, status } = useSession()
   const handleText = (event) => {
@@ -59,15 +61,6 @@ const Blog: React.FC<Props> = (props) => {
     fetchTasks()
   }, [category])
 
-  let notPurchaseds = notPurchased.map(item => {
-    item.updateLists = updateLists
-    return (
-      <div key={item.id} className="item">
-        <Item item={item} />
-      </div>
-    )
-  })
-
   let categoriesObj: CategoryObject = {}
   for (let item of notPurchased) {
     if(!(item.category in categoriesObj)) {
@@ -103,6 +96,8 @@ const Blog: React.FC<Props> = (props) => {
     let thisCategory = newList.shift()
 
     let completedMap = newList.filter(item => item.purchased == true).map(item => {
+      item.updateLists = updateLists
+      item.editing = editing
       return(
         <div key={item.id} className="item">
           <Item item={item} />
@@ -110,6 +105,8 @@ const Blog: React.FC<Props> = (props) => {
       )
     })
     let notCompletedMap = newList.filter(item => item.purchased != true).map(item => {
+      item.updateLists = updateLists
+      item.editing = editing
       return(
         <div key={item.id} className="item">
           <Item item={item} />
@@ -122,7 +119,16 @@ const Blog: React.FC<Props> = (props) => {
         {notCompletedMap}
         {completedMap}
       </div>
+
     )
+  }
+
+  const handleEdit = () => {
+    if(editing) {
+      setEditing(false)
+    } else {
+      setEditing(true)
+    }
   }
   
   return (
@@ -146,6 +152,7 @@ const Blog: React.FC<Props> = (props) => {
             </select>
             <input type="submit"/>
           </form>
+          <img alt="" src={`images/${(editing == true) ? 'editing' : 'edit'}.png`} width="35px" onClick={handleEdit} height="35px"/>
           <div className="container">
             <section className="cat-container">
               {elements}
@@ -158,12 +165,18 @@ const Blog: React.FC<Props> = (props) => {
           margin-top: .5rem;
         }
 
+        img {
+          margin-left: auto;
+          margin-right: auto;
+          margin-top: 5rem;
+        }
+
         .container{
           display: flex;
           flex-direction: row;
           justify-content: space-around;
           align-content: center;
-          margin-top: 5%;
+          margin-top: 2%;
         }
 
         .cat-container {

@@ -15,10 +15,12 @@ export type ItemProps = {
   category: string;
   name: string;
   updateLists: () => any;
+  editing: boolean;
 };
 
 const Item: React.FC<{ item: ItemProps }> = (props) => {
   const { item } = props
+  const [rename, setRename] = useState(item.name)
   const handleComplete = async (event) => {
     await fetch(`/api/v1/item/${item.id}`, {
       method: "PATCH",
@@ -27,30 +29,62 @@ const Item: React.FC<{ item: ItemProps }> = (props) => {
     })
     item.updateLists()
   }
-  const handleDelete = (event) => {
-    
+
+  const updateItem = async (event) => {
+    event.preventDefault()
+    console.log(rename)
+    await fetch(`/api/v1/item/${item.id}`, {
+      method: "PATCH",
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ rename }),
+      credentials: "include"
+    })
+    item.updateLists()
   }
 
-  let checkbox = <img alt="" src="images/unchecked.png" onClick={handleComplete} width="17px"
-  height="17px"/>
-  if(item.purchased) {
-    checkbox = <img alt="" src="images/checkbox.png" onClick={handleComplete} width="17px"
-    height="17px"/>
+  let iconPath = "images/unchecked.png"
+  let className = ""
+  let itemText: any = item.name
+  if(item.editing) {
+    iconPath = "images/bin.png"
+    className = "editing"
+    itemText = <form className="editForm" onSubmit={updateItem}>
+      <input type="text" value={rename} onChange={(event) => {setRename(event.currentTarget.value)}} />
+      <style jsx>
+        {`
+          form {
+            display: inline;
+          }
+          input {
+            width: 75%;
+            font-size: 16px;
+          }
+        `}
+      </style>
+    </form>
+  } else if(item.purchased) {
+    iconPath = "images/checkbox.png"
   }
+
+  let image = <img alt="" src={iconPath} onClick={handleComplete} width="17px"
+  height="17px"/>
   return (
     <div> 
       <label>
-      <div className="checkbox-wrapper">
-          {checkbox}
+        <div className="checkbox-wrapper">
+          {image}
         </div>
-        {item.name}
+        <div className='form-wrapper'>
+        {itemText}
+        </div>
+
         <div className="bin-wrapper">
-        <Image
-            src="/images/bin.png"
-            width="16px"
-            height="16px"
-            alt="Loading..."
-          />
+          <Image
+              src="/images/bin.png"
+              width="15px"
+              height="15px"
+              alt="Loading..."
+            />
         </div>
       </label>
       
@@ -59,6 +93,11 @@ const Item: React.FC<{ item: ItemProps }> = (props) => {
           color: inherit;
           display: flex;
           flex-direction: column;
+        }
+
+        .form-wrapper {
+          text-align: center;
+          display: inline;
         }
 
         .checkbox-wrapper{
