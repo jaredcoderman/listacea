@@ -132,6 +132,11 @@ const List: React.FC<Props> = (props) => {
     itemsWithCategories.push(element)
   }
 
+  let selectClass = ""
+  if(categories.length === 0) {
+    selectClass = "no-categories"
+  }
+
   return (
     <Layout>
       <div className="page">
@@ -140,7 +145,7 @@ const List: React.FC<Props> = (props) => {
           <form onSubmit={handleSubmit}>
             <label htmlFor="task">New Item</label>
             <input placeholder="bread.." name="task" type="text" onChange={handleText} value={item} />
-            <select onChange={handleSelect}>
+            <select className={selectClass} onChange={handleSelect}>
               {categoryMap}
             </select>
             <Link href="/categories">
@@ -159,6 +164,10 @@ const List: React.FC<Props> = (props) => {
       <style jsx>{`
         .item + .item {
           margin-top: .5rem;
+        }
+
+        .no-categories {
+          display: none;
         }
 
         a {

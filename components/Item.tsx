@@ -49,9 +49,18 @@ const Item: React.FC<{ item: ItemProps }> = (props) => {
     item.updateLists()
   }
 
+  const capitalize = str => {
+    let words = str.split(" ")
+    let result = ""
+    for(let word of words) {
+      result += word.charAt(0).toUpperCase() + word.substring(1, word.length) + " "
+    }
+    return result
+  }
+
   let iconPath = "images/unchecked.png"
   let className = ""
-  let itemText: any = item.name
+  let itemText: any = capitalize(item.name)
   if (item.editing) {
     iconPath = "images/bin.png"
     className = "editing"
