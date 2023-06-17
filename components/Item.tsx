@@ -3,16 +3,13 @@ import Router from "next/router";
 import ReactMarkdown from "react-markdown";
 import { Item } from "@prisma/client";
 import Image from "next/image";
+import { CategoryProps } from "./Category";
 
 export type ItemProps = {
   id: number;
   title: string;
-  user: {
-    name: string;
-    email: string;
-  } | null;
   purchased: boolean;
-  category: string;
+  category: CategoryProps;
   name: string;
   updateLists: () => any;
   editing: boolean;
@@ -22,18 +19,18 @@ const Item: React.FC<{ item: ItemProps }> = (props) => {
   const { item } = props
   const [rename, setRename] = useState(item.name)
   const handleComplete = async (event) => {
-    if(item.editing) {
+    if (item.editing) {
       let yes = confirm(`Are you sure you want to delete \"${item.name}\"?`)
-      if(!yes) return
+      if (!yes) return
       await fetch(`/api/v1/item/${item.id}`, {
         method: "DELETE",
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         credentials: "include"
       })
     } else {
       await fetch(`/api/v1/item/${item.id}`, {
         method: "PATCH",
-        headers: {'Content-Type': 'application/json'},
+        headers: { 'Content-Type': 'application/json' },
         credentials: "include"
       })
     }
@@ -45,7 +42,7 @@ const Item: React.FC<{ item: ItemProps }> = (props) => {
     console.log(rename)
     await fetch(`/api/v1/item/${item.id}`, {
       method: "PATCH",
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ rename }),
       credentials: "include"
     })
@@ -55,11 +52,11 @@ const Item: React.FC<{ item: ItemProps }> = (props) => {
   let iconPath = "images/unchecked.png"
   let className = ""
   let itemText: any = item.name
-  if(item.editing) {
+  if (item.editing) {
     iconPath = "images/bin.png"
     className = "editing"
     itemText = <form className="editForm" onSubmit={updateItem}>
-      <input type="text" value={rename} onChange={(event) => {setRename(event.currentTarget.value)}} />
+      <input type="text" value={rename} onChange={(event) => { setRename(event.currentTarget.value) }} />
       <style jsx>
         {`
           form {
@@ -72,32 +69,31 @@ const Item: React.FC<{ item: ItemProps }> = (props) => {
         `}
       </style>
     </form>
-  } else if(item.purchased) {
+  } else if (item.purchased) {
     iconPath = "images/checkbox.png"
   }
 
   let image = <img alt="" src={iconPath} onClick={handleComplete} width="17px"
-  height="17px"/>
+    height="17px" />
   return (
-    <div> 
+    <div>
       <label>
         <div className="checkbox-wrapper">
           {image}
         </div>
         <div className='form-wrapper'>
-        {itemText}
+          {itemText}
         </div>
-
         <div className="bin-wrapper">
           <Image
-              src="/images/bin.png"
-              width="15px"
-              height="15px"
-              alt="Loading..."
-            />
+            src="/images/bin.png"
+            width="15px"
+            height="15px"
+            alt="Loading..."
+          />
         </div>
       </label>
-      
+
       <style jsx>{`
         div {
           color: inherit;

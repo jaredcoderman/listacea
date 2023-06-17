@@ -3,6 +3,9 @@ import Layout from "../components/Layout"
 import Item, { ItemProps } from "../components/Item"
 import { useSession } from "next-auth/react"
 import Image from "next/image";
+import Link from "next/link";
+import { CategoryProps } from "../components/Category";
+
 
 type Props = {
   items: ItemProps[]
@@ -12,11 +15,17 @@ type CategoryObject = {
   [category: string]: ItemProps[];
 }
 
-const Blog: React.FC<Props> = (props) => {
+type Items = {
+  [category: string]: ItemProps[]
+}
+ 
+
+const List: React.FC<Props> = (props) => {
   const [item, setItem] = useState("")
-  const [notPurchased, setNotPurchased] = useState([])
-  const [category, setCategory] = useState("Fruit/Veg")
+  const [items, setItems] = useState<Items>({})
+  const [category, setCategory] = useState("")
   const [editing, setEditing] = useState(false)
+  const [categories, setCategories] = useState([])
 
   const { data: session, status } = useSession()
   const handleText = (event) => {
@@ -24,33 +33,52 @@ const Blog: React.FC<Props> = (props) => {
   }
 
   const handleSubmit = async (event: React.SyntheticEvent) => {
-    event.preventDefault() 
-    if(item === "" || status !== "authenticated") return
+    event.preventDefault()
+    if (item === "" || status !== "authenticated") return
     await fetch('/api/v1/item', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ item, category }),
       credentials: "include"
     })
     setItem("")
-    fetchTasks()
+    fetchItems()
   }
 
-  const fetchTasks = async() => {
+  const fetchItems = async () => {
     try {
       const response = await fetch("/api/v1/item", {
         method: "GET",
       })
-      if(response.status === 204) return
-      const newTasks = await response.json()
-      setNotPurchased([...newTasks.items])
-    } catch(err) {
+      if (response.status === 204) return
+      const newItems = await response.json()
+      setItems(newItems.items)
+    } catch (err) {
       console.error(err)
     }
   }
 
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch("/api/v1/category", {
+        method: "GET",
+      })
+      if (response.status === 204) return
+      let responseBody = await response.json()
+      setCategories(responseBody.categories)
+    } catch (err) {
+      console.error(err)
+    }
+  }
+  
+  const categoryMap = categories.map(thisCategory => {
+    return (
+      <option key={thisCategory.id} value={thisCategory.name}>{thisCategory.name}</option>
+    )
+  })
+
   const updateLists = () => {
-    fetchTasks()
+    fetchItems()
   }
 
   const handleSelect = (event) => {
@@ -58,79 +86,52 @@ const Blog: React.FC<Props> = (props) => {
   }
 
   useEffect(() => {
-    fetchTasks()
-  }, [category])
+    fetchCategories()
+    fetchItems()
+  }, [])
 
-  let categoriesObj: CategoryObject = {}
-  for (let item of notPurchased) {
-    if(!(item.category in categoriesObj)) {
-      categoriesObj[item.category] = [item]
-    } else {
-      categoriesObj[item.category].push(item)
+  useEffect(() => {
+    if (categories.length > 0) {
+      setCategory(categories[0].name)
     }
-  }
-
-  let categoryLists = []
-  for(const [category, itemList] of Object.entries(categoriesObj)) {
-    let newList: (string|ItemProps)[] = [category]
-    for(let item of itemList) {
-      newList.push(item)
-    }
-    categoryLists.push(newList)
-  }
-  categoryLists.sort((a, b) => {
-    const firstElementA = a[0].toLowerCase();
-    const firstElementB = b[0].toLowerCase();
-  
-    if (firstElementA < firstElementB) {
-      return -1;
-    }
-    if (firstElementA > firstElementB) {
-      return 1;
-    }
-    return 0;
-  });
-  let elements = []
-  for(let list of categoryLists) {
-    let newList = [...list]
-    let thisCategory = newList.shift()
-
-    let completedMap = newList.filter(item => item.purchased == true).map(item => {
-      item.updateLists = updateLists
-      item.editing = editing
-      return(
-        <div key={item.id} className="item">
-          <Item item={item} />
-        </div>
-      )
-    })
-    let notCompletedMap = newList.filter(item => item.purchased != true).map(item => {
-      item.updateLists = updateLists
-      item.editing = editing
-      return(
-        <div key={item.id} className="item">
-          <Item item={item} />
-        </div>
-      )
-    })
-    elements.push(
-      <div className="category" key={elements.length}>
-        <h2>{thisCategory}</h2>
-        {notCompletedMap}
-        {completedMap}
-      </div>
-
-    )
-  }
+  }, [categories])
 
   const handleEdit = () => {
-    if(editing) {
+    if (editing) {
       setEditing(false)
     } else {
       setEditing(true)
     }
   }
-  
+
+  let itemsWithCategories = []
+  for(const [category, itemList] of Object.entries(items)) {
+    let mappedNotPurchased = itemList.filter(item => item.purchased == false).map(item => {
+      item.updateLists = updateLists
+      item.editing = editing
+      return(
+        <div key={item.id}>
+          <Item item={item} />
+        </div>
+      )
+    })
+    let mappedPurchased = itemList.filter(item => item.purchased == true).map(item => {
+      item.updateLists = updateLists
+      item.editing = editing
+      return(
+        <div key={item.id}>
+          <Item item={item} />
+        </div>
+      )
+    })
+    let element = <div key={itemsWithCategories.length}>
+      <h2>{category}</h2>
+      {mappedNotPurchased}
+      {mappedPurchased}
+    </div>
+    itemsWithCategories.push(element)
+  }
+
   return (
     <Layout>
       <div className="page">
@@ -138,24 +139,19 @@ const Blog: React.FC<Props> = (props) => {
         <main>
           <form onSubmit={handleSubmit}>
             <label htmlFor="task">New Item</label>
-            <input placeholder="bread.." name="task" type="text" onChange={handleText} value={item}/>
+            <input placeholder="bread.." name="task" type="text" onChange={handleText} value={item} />
             <select onChange={handleSelect}>
-              <option value="Fruit/Veg">Fruit/Veg</option>
-              <option value="Dairy">Dairy</option>
-              <option value="Bread/Pasta/Rice">Bread/Pasta/Rice</option>
-              <option value="Snacks">Snacks</option>
-              <option value="Home Products">Home Products</option>
-              <option value="Frozen">Frozen</option>
-              <option value="Fancy Cheese Area">Fancy Cheese Area</option>
-              <option value="Canned Stuff/Dressings">Canned Stuff/Dressings</option>
-              <option value="Condiments">Condiments</option>
+              {categoryMap}
             </select>
-            <input type="submit"/>
+            <Link href="/categories">
+              <a>change</a>
+            </Link>
+            <input type="submit" />
           </form>
-          <img alt="" src={`images/${(editing == true) ? 'editing' : 'edit'}.png`} width="35px" onClick={handleEdit} height="35px"/>
+          <img className="edit" alt="" src={`images/${(editing == true) ? 'editing' : 'edit'}.png`} width="35px" onClick={handleEdit} height="35px" />
           <div className="container">
             <section className="cat-container">
-              {elements}
+              {itemsWithCategories}
             </section>
           </div>
         </main>
@@ -163,6 +159,19 @@ const Blog: React.FC<Props> = (props) => {
       <style jsx>{`
         .item + .item {
           margin-top: .5rem;
+        }
+
+        a {
+          text-decoration: none;
+          background-color: #transparent;
+          color: gray;
+          border-radius: 5px;
+          padding: 2px 8px;
+          font-size: 14px;
+        }
+
+        .edit {
+          cursor: pointer;
         }
 
         img {
@@ -205,6 +214,7 @@ const Blog: React.FC<Props> = (props) => {
           -webkit-appearance: none;
           padding-top: 2px;
           padding-left: 6px;
+          padding-right: 6px;
           padding-bottom: 3px;
           color: black;
           font-size: 16px !important;
@@ -212,16 +222,16 @@ const Blog: React.FC<Props> = (props) => {
         }
 
         input[type="submit"] {
-          background-color: #E6E6E6;
-          border: none;
+          background-color: #29bc9b;
           margin-top: .5em;
           border-radius: 2px;
           font-size: 14px;
           border-radius: 5px;
           -webkit-appearance: none;
           padding: 4px 8px;
-          color: black;
-          margin-left: .5rem;
+          color: white;
+          font-weight: bold;
+          border: solid 1px black;
         }
 
         input[type="submit"]:hover {
@@ -250,11 +260,12 @@ const Blog: React.FC<Props> = (props) => {
         }
 
         label {
-          font-size: 18px;
+          font-size: 17px;
+          font-weight: bold;
         }
       `}</style>
     </Layout>
   )
 }
 
-export default Blog
+export default List
