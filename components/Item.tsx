@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef, ReactEventHandler, DragEventHandler } from "react";
 import Router from "next/router";
 import ReactMarkdown from "react-markdown";
 import { Item } from "@prisma/client";
@@ -12,6 +12,8 @@ export type ItemProps = {
   category: CategoryProps;
   name: string;
   updateLists: () => any;
+  dragStart: React.DragEventHandler<HTMLDivElement>;
+  dragDrop: React.DragEventHandler<HTMLDivElement>;
   editing: boolean;
 };
 
@@ -60,7 +62,9 @@ const Item: React.FC<{ item: ItemProps }> = (props) => {
 
   let iconPath = "images/unchecked.png"
   let className = ""
-  let itemText: any = capitalize(item.name)
+  const itemTextRef = useRef(null);
+  let itemText: any = <span>{capitalize(item.name)}</span>
+
   if (item.editing) {
     iconPath = "images/bin.png"
     className = "editing"
@@ -85,7 +89,7 @@ const Item: React.FC<{ item: ItemProps }> = (props) => {
   let image = <img alt="" src={iconPath} onClick={handleComplete} width="17px"
     height="17px" />
   return (
-    <div>
+    <div onDragStart={(event: React.DragEvent<HTMLDivElement>) => item.dragStart(event)} draggable="true" ref={itemTextRef} id={`${item.id}`}>
       <label>
         <div className="checkbox-wrapper">
           {image}
@@ -108,6 +112,11 @@ const Item: React.FC<{ item: ItemProps }> = (props) => {
           color: inherit;
           display: flex;
           flex-direction: column;
+          cursor: pointer;
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
         }
 
         .form-wrapper {

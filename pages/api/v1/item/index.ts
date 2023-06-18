@@ -43,7 +43,14 @@ export default async function handle(req, res) {
           categoriesWithItems[category.name].push(item)
         }
       }
-      res.json({ items: categoriesWithItems})
+      
+      const sortedKeys = Object.keys(categoriesWithItems).sort();
+
+      const sortedObject = {};
+      for (const key of sortedKeys) {
+        sortedObject[key] = categoriesWithItems[key];
+      }
+      res.json({ items: sortedObject})
     }
   }
 

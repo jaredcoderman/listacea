@@ -16,7 +16,7 @@ export default async function handle(req, res) {
     res.json({ success: "Hello from " + categoryToUpdate.name})
   }
   if(req.method === "PATCH") {
-    const { rename } = req.body
+    const { rename, category } = req.body
     if(rename) {
       await prisma.category.update({
         where: {

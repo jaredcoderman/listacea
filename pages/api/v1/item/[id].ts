@@ -27,7 +27,7 @@ export default async function handle(req, res) {
     res.json({ success: "Hello from " + itemToUpdate.name})
   }
   if(req.method === "PATCH") {
-    const { rename } = req.body
+    const { rename, category } = req.body
     if(rename) {
       await prisma.item.update({
         where: {
@@ -35,6 +35,23 @@ export default async function handle(req, res) {
         },
         data: {
           name: rename
+        }
+      })
+      return res.json()
+    }
+    if(category) {
+      let cat = await prisma.category.findFirst({
+        where: {
+          name: category,
+          user: session.user
+        }
+      })
+      await prisma.item.update({
+        where: {
+          id: id
+        },
+        data: {
+          categoryId: cat.id
         }
       })
       return res.json()

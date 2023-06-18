@@ -2,9 +2,8 @@ import React, { useEffect, useState } from "react"
 import Layout from "../components/Layout"
 import Item, { ItemProps } from "../components/Item"
 import { useSession } from "next-auth/react"
-import Image from "next/image";
 import Link from "next/link";
-import { CategoryProps } from "../components/Category";
+import { useRouter } from 'next/router'
 
 
 type Props = {
@@ -20,261 +19,76 @@ type Items = {
 }
  
 
-const List: React.FC<Props> = (props) => {
-  const [item, setItem] = useState("")
-  const [items, setItems] = useState<Items>({})
-  const [category, setCategory] = useState("")
-  const [editing, setEditing] = useState(false)
-  const [categories, setCategories] = useState([])
-
+const Home: React.FC<Props> = (props) => {
+  const router = useRouter()
   const { data: session, status } = useSession()
-  const handleText = (event) => {
-    setItem(event.target.value)
+  if(status === "authenticated") {
+    router.push("/list")
   }
-
-  const handleSubmit = async (event: React.SyntheticEvent) => {
-    event.preventDefault()
-    if (item === "" || status !== "authenticated") return
-    await fetch('/api/v1/item', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ item, category }),
-      credentials: "include"
-    })
-    setItem("")
-    fetchItems()
-  }
-
-  const fetchItems = async () => {
-    try {
-      const response = await fetch("/api/v1/item", {
-        method: "GET",
-      })
-      if (response.status === 204) return
-      const newItems = await response.json()
-      setItems(newItems.items)
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
-  const fetchCategories = async () => {
-    try {
-      const response = await fetch("/api/v1/category", {
-        method: "GET",
-      })
-      if (response.status === 204) return
-      let responseBody = await response.json()
-      setCategories(responseBody.categories)
-    } catch (err) {
-      console.error(err)
-    }
-  }
-  
-  const categoryMap = categories.map(thisCategory => {
-    return (
-      <option key={thisCategory.id} value={thisCategory.name}>{thisCategory.name}</option>
-    )
-  })
-
-  const updateLists = () => {
-    fetchItems()
-  }
-
-  const handleSelect = (event) => {
-    setCategory(event.target.value)
-  }
-
-  useEffect(() => {
-    fetchCategories()
-    fetchItems()
-  }, [])
-
-  useEffect(() => {
-    if (categories.length > 0) {
-      setCategory(categories[0].name)
-    }
-  }, [categories])
-
-  const handleEdit = () => {
-    if (editing) {
-      setEditing(false)
-    } else {
-      setEditing(true)
-    }
-  }
-
-  let itemsWithCategories = []
-  for(const [category, itemList] of Object.entries(items)) {
-    let mappedNotPurchased = itemList.filter(item => item.purchased == false).map(item => {
-      item.updateLists = updateLists
-      item.editing = editing
-      return(
-        <div key={item.id}>
-          <Item item={item} />
-        </div>
-      )
-    })
-    let mappedPurchased = itemList.filter(item => item.purchased == true).map(item => {
-      item.updateLists = updateLists
-      item.editing = editing
-      return(
-        <div key={item.id}>
-          <Item item={item} />
-        </div>
-      )
-    })
-    let element = <div key={itemsWithCategories.length}>
-      <h2>{category}</h2>
-      {mappedNotPurchased}
-      {mappedPurchased}
-    </div>
-    itemsWithCategories.push(element)
-  }
-
-  let selectClass = ""
-  if(categories.length === 0) {
-    selectClass = "no-categories"
-  }
-
-  return (
+  return(
     <Layout>
-      <div className="page">
-        <h1>Grocery List</h1>
-        <main>
-          <form onSubmit={handleSubmit}>
-            <label htmlFor="task">New Item</label>
-            <input placeholder="bread.." name="task" type="text" onChange={handleText} value={item} />
-            <select className={selectClass} onChange={handleSelect}>
-              {categoryMap}
-            </select>
-            <Link href="/categories">
-              <a>change</a>
-            </Link>
-            <input type="submit" />
-          </form>
-          <img className="edit" alt="" src={`images/${(editing == true) ? 'editing' : 'edit'}.png`} width="35px" onClick={handleEdit} height="35px" />
-          <div className="container">
-            <section className="cat-container">
-              {itemsWithCategories}
-            </section>
-          </div>
-        </main>
+      <div className="call-to-action">
+        <h1>Welcome</h1>
+        <h4>Groceries Made Simple</h4>
+        <Link href="/api/auth/signin">
+          <a>Get Started</a>
+        </Link>
+      </div>
+      <div className="explanation">
+        <h3>How It Works</h3>
+        <div className="guide">
+          <p>1. Make an account</p>
+          <p>2. Make categories for your groceries</p>
+          <p>3. Make items for those categories</p>
+          <p>4. Check and uncheck off items as needed</p>
+        </div>
       </div>
       <style jsx>{`
-        .item + .item {
-          margin-top: .5rem;
+        .call-to-action {
+          display: flex;
+          margin-left: auto;
+          margin-right: auto;
+          flex-direction: column;
+        } 
+
+        .guide {
+          display: table;
+          margin-left: auto;
+          margin-right: auto;
         }
 
-        .no-categories {
-          display: none;
+        h1 {
+          text-align: center;
+          font-size: 40px;
+        }
+
+        h4 {
+          text-align: center;
+          font-weight: normal;
+        }
+
+        h3 {
+          margin-top: 4rem;
+          text-align: center;
         }
 
         a {
           text-decoration: none;
           background-color: #transparent;
-          color: gray;
+          color: black;
           border-radius: 5px;
           padding: 2px 8px;
           font-size: 14px;
-        }
-
-        .edit {
-          cursor: pointer;
-        }
-
-        img {
-          margin-left: auto;
-          margin-right: auto;
-          margin-top: 5rem;
-        }
-
-        .container{
-          display: flex;
-          flex-direction: row;
-          justify-content: space-around;
-          align-content: center;
-          margin-top: 2%;
-        }
-
-        .cat-container {
-          display: flex;
-          flex-direction: column;
-          flex-wrap: wrap;
-        }
-        
-        main {
-          display: flex;
-          flex-direction: column;
-        }
-
-        h1 {
-          text-align: center;
-        }
-
-        form {
-          margin-left: auto;
-          margin-right: auto;
-        }
-
-        select {
-          border-radius: 3px;
-          background-color: transparent;
-          -webkit-appearance: none;
-          padding-top: 2px;
-          padding-left: 6px;
-          padding-right: 6px;
-          padding-bottom: 3px;
-          color: black;
-          font-size: 16px !important;
-          border: black 1px solid
-        }
-
-        input[type="submit"] {
-          background-color: #29bc9b;
-          margin-top: .5em;
-          border-radius: 2px;
-          font-size: 14px;
-          border-radius: 5px;
-          -webkit-appearance: none;
-          padding: 4px 8px;
-          color: white;
-          font-weight: bold;
+          background-color: white;
           border: solid 1px black;
-        }
-
-        input[type="submit"]:hover {
-          cursor: pointer;
-        }
-
-        input[name="task"] {
-          margin-top: .5em;
-          background-color: transparent;
-          border-bottom: solid black 1px;
-          border-top: none;
-          border-left: none;
-          border-right: none;
-          border-top-left-radius: 0px;
-          border-top-right-radius: 0px;
-          border-bottom-left-radius: 4px;
-          border-bottom-right-radius: 4px;
-          display: block;
-          -webkit-appearance: none;
-          width: 100%;
-        }
-
-        input[name="task"]:focus {
-          outline: none;
-          -webkit-appearance: none;
-        }
-
-        label {
-          font-size: 17px;
+          margin-left: auto;
+          margin-right: auto;
           font-weight: bold;
+          padding: 5px 10px;
         }
       `}</style>
     </Layout>
   )
 }
 
-export default List
+export default Home
