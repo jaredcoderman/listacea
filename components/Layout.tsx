@@ -14,6 +14,12 @@ const Layout: React.FC<Props> = (props) => (
         box-sizing: border-box;
       }
 
+      .link {
+        text-decoration: none;
+        color: var(--geist-foreground);
+        display: inline-block;
+      }
+
       *,
       *:before,
       *:after {

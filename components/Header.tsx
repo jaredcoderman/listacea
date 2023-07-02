@@ -10,12 +10,12 @@ const Header: React.FC = () => {
     router.pathname === pathname;
 
   const { data: session, status } = useSession();
-
+  let activePath = status === "authenticated" ? "/list" : "/" 
   let left = (
     <div className="left">
-      <Link href="/">
-        <a className="bold" data-active={isActive('/')}>
-          GroceryList
+      <Link legacyBehavior href={activePath}>
+        <a className="bold" data-active={isActive(activePath)}>
+          Listify
         </a>
       </Link>
       <style jsx>{`
@@ -45,9 +45,9 @@ const Header: React.FC = () => {
   if (status === 'loading') {
     left = (
       <div className="left">
-        <Link href="/">
-          <a className="bold" data-active={isActive('/')}>
-            GroceryList
+        <Link legacyBehavior href={activePath}>
+          <a className="bold" data-active={isActive(activePath)}>
+            Listify
           </a>
         </Link>
         <style jsx>{`
@@ -86,7 +86,7 @@ const Header: React.FC = () => {
   if (!session) {
     right = (
       <div className="right">
-        <Link href="/api/auth/signin">
+        <Link legacyBehavior href="/api/auth/signin">
           <a data-active={isActive('/signup')}>Log in</a>
         </Link>
         <style jsx>{`
@@ -117,9 +117,9 @@ const Header: React.FC = () => {
   if (session) {
     left = (
       <div className="left">
-        <Link href="/">
-          <a className="bold" data-active={isActive('/')}>
-            GroceryList
+        <Link legacyBehavior href={activePath}>
+          <a className="bold" data-active={isActive(activePath)}>
+            Listify
           </a>
         </Link>
         <style jsx>{`

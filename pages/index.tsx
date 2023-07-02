@@ -1,25 +1,10 @@
 import React, { useEffect, useState } from "react"
 import Layout from "../components/Layout"
-import Item, { ItemProps } from "../components/Item"
 import { useSession } from "next-auth/react"
 import Link from "next/link";
 import { useRouter } from 'next/router'
 
-
-type Props = {
-  items: ItemProps[]
-}
-
-type CategoryObject = {
-  [category: string]: ItemProps[];
-}
-
-type Items = {
-  [category: string]: ItemProps[]
-}
- 
-
-const Home: React.FC<Props> = (props) => {
+const Home = (props) => {
   const router = useRouter()
   const { data: session, status } = useSession()
   if(status === "authenticated") {
@@ -30,7 +15,7 @@ const Home: React.FC<Props> = (props) => {
       <div className="call-to-action">
         <h1>Welcome</h1>
         <h4>Groceries Made Simple</h4>
-        <Link href="/api/auth/signin">
+        <Link legacyBehavior href="/api/auth/signin">
           <a>Get Started</a>
         </Link>
       </div>
@@ -38,9 +23,10 @@ const Home: React.FC<Props> = (props) => {
         <h3>How It Works</h3>
         <div className="guide">
           <p>1. Make an account</p>
-          <p>2. Make categories for your groceries</p>
-          <p>3. Make items for those categories</p>
-          <p>4. Check and uncheck off items as needed</p>
+          <p>2. Make lists (i.e. groceries)</p>
+          <p>3. Make categories for your lists</p>
+          <p>4. Put items in those categories</p>
+          <p>5. Check off items when purchased and uncheck when you need more</p>
         </div>
       </div>
       <style jsx>{`
@@ -77,7 +63,6 @@ const Home: React.FC<Props> = (props) => {
           background-color: #transparent;
           color: black;
           border-radius: 5px;
-          padding: 2px 8px;
           font-size: 14px;
           background-color: white;
           border: solid 1px black;
@@ -85,6 +70,14 @@ const Home: React.FC<Props> = (props) => {
           margin-right: auto;
           font-weight: bold;
           padding: 5px 10px;
+          transition: .25s;
+        }
+
+        a:hover {
+          background-color: black;
+          color: white;
+          transition: .25s;
+          padding: 8px 14px;
         }
       `}</style>
     </Layout>

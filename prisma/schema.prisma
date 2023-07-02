@@ -22,10 +22,18 @@ model Item {
 
 model Category {
   id Int @id @default(autoincrement()) 
+  name String @db.VarChar(20)
+  list List? @relation(fields: [listId], references: [id], onDelete: Cascade)
+  listId Int?
+  items Item[]
+}
+
+model List {
+  id Int @id @default(autoincrement()) 
   name String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
-  items Item[]
+  categories Category[]
 }
 
 model Account {
@@ -65,7 +73,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
-  categories Category[]
+  lists         List[]
 }
 
 model VerificationToken {

@@ -1,158 +1,156 @@
-import React, { useState, useEffect, useRef, ReactEventHandler, DragEventHandler } from "react";
-import Router from "next/router";
-import ReactMarkdown from "react-markdown";
-import { Item } from "@prisma/client";
-import Image from "next/image";
-import { CategoryProps } from "./Category";
+import React, { useState, useRef, useEffect } from "react";
+import useSWR, { mutate } from "swr"
+
 
 export type ItemProps = {
-  id: number;
-  title: string;
-  purchased: boolean;
-  category: CategoryProps;
   name: string;
-  updateLists: () => any;
-  dragStart: React.DragEventHandler<HTMLDivElement>;
-  dragDrop: React.DragEventHandler<HTMLDivElement>;
-  editing: boolean;
-};
+  id: number;
+  purchased: boolean;
+  categoryId: number;
+}
 
-const Item: React.FC<{ item: ItemProps }> = (props) => {
-  const { item } = props
+type Props = {
+  item: ItemProps;
+  listId: number;
+  editingAll: boolean;
+}
+
+const Item: React.FC<Props> = (props) => {
+  const { item, listId, editingAll } = props
+  const [editing, setEditing] = useState(false)
   const [rename, setRename] = useState(item.name)
-  const handleComplete = async (event) => {
-    if (item.editing) {
-      let yes = confirm(`Are you sure you want to delete \"${item.name}\"?`)
-      if (!yes) return
-      await fetch(`/api/v1/item/${item.id}`, {
-        method: "DELETE",
-        headers: { 'Content-Type': 'application/json' },
-        credentials: "include"
-      })
-    } else {
-      await fetch(`/api/v1/item/${item.id}`, {
+  const inputRef = useRef(null)
+
+  const url = `/api/v1/list/${listId}/category/${item.categoryId}/item/${item.id}`
+  const handleClick = async (e) => {
+    try {
+      const bool = !item.purchased
+      const response = await fetch(url, {
         method: "PATCH",
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bool }),
         credentials: "include"
       })
+      if(!response.ok) throw new Error(`${response.status} (${response.statusText})`)
+      mutate(`/api/v1/list/${listId}/category`)
+    } catch(err) {
+      console.error(err)
     }
-    item.updateLists()
   }
 
-  const updateItem = async (event) => {
-    event.preventDefault()
-    console.log(rename)
-    await fetch(`/api/v1/item/${item.id}`, {
-      method: "PATCH",
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ rename }),
-      credentials: "include"
-    })
-    item.updateLists()
-  }
-
-  const capitalize = str => {
-    let words = str.split(" ")
-    let result = ""
-    for(let word of words) {
-      result += word.charAt(0).toUpperCase() + word.substring(1, word.length) + " "
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    setEditing(false)
+    if(item.name !== "rename") {
+      try {
+        const response = await fetch(`/api/v1/list/${listId}/category/${item.categoryId}/item/${item.id}`, {
+          method: "PATCH",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ rename }),
+          credentials: "include"
+        })
+        if(!response.ok) throw new Error(`${response.status} (${response.statusText})`)
+        mutate(`/api/v1/list/${listId}/category`)
+      } catch(err) {
+        console.error(err)
+      }
     }
-    return result
   }
 
-  let iconPath = "images/unchecked.png"
-  let className = ""
-  const itemTextRef = useRef(null);
-  let itemText: any = <span>{capitalize(item.name)}</span>
-
-  if (item.editing) {
-    iconPath = "images/bin.png"
-    className = "editing"
-    itemText = <form className="editForm" onSubmit={updateItem}>
-      <input type="text" value={rename} onChange={(event) => { setRename(event.currentTarget.value) }} />
-      <style jsx>
-        {`
-          form {
-            display: inline;
-          }
-          input {
-            width: 75%;
-            font-size: 16px;
-          }
-        `}
-      </style>
-    </form>
-  } else if (item.purchased) {
-    iconPath = "images/checkbox.png"
+  const handleRename = (e) => {
+    if(e.currentTarget.value.length > 20) return
+    setRename(e.currentTarget.value)
   }
 
-  let image = <img alt="" src={iconPath} onClick={handleComplete} width="17px"
-    height="17px" />
+  const handleEdit = () => {
+    setEditing(!editing)
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (inputRef.current && !inputRef.current.contains(event.target)) {
+        setEditing(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+  
+  const handleDelete = async () => {
+    const verify = confirm(`Are you sure you want to delete item: '${item.name}'?`)
+    if(!verify) return
+    try {
+      const response = await fetch(`/api/v1/list/${listId}/category/${item.categoryId}/item/${item.id}`, {
+        method: "DELETE",
+      })
+      if(!response.ok) throw new Error(`${response.status} (${response.statusText})`)
+      mutate(`/api/v1/list/${listId}/category`)
+    } catch(err) {
+      console.error(err)
+    }
+  }
+
   return (
-    <div onDragStart={(event: React.DragEvent<HTMLDivElement>) => item.dragStart(event)} draggable="true" ref={itemTextRef} id={`${item.id}`}>
-      <label>
-        <div className="checkbox-wrapper">
-          {image}
-        </div>
-        <div className='form-wrapper'>
-          {itemText}
-        </div>
-        <div className="bin-wrapper">
-          <Image
-            src="/images/bin.png"
-            width="15px"
-            height="15px"
-            alt="Loading..."
-          />
-        </div>
-      </label>
-
-      <style jsx>{`
-        div {
-          color: inherit;
-          display: flex;
-          flex-direction: column;
-          cursor: pointer;
-          -webkit-user-select: none;
-          -moz-user-select: none;
-          -ms-user-select: none;
-          user-select: none;
-        }
-
-        .form-wrapper {
-          text-align: center;
-          display: inline;
-        }
-
-        .checkbox-wrapper{
-          display: inline;
-          cursor: pointer;
+    <div>
+      <img onClick={handleClick} src={item.purchased ? "/images/checkbox.png" : "/images/unchecked.png"} />
+      {editing ? (
+            <form className={'edit-form ' + (editing ? 'editing-form' : '')} onSubmit={handleSubmit}>
+              <input
+                type="text"
+                className='item-field'
+                value={rename}
+                ref={inputRef}
+                onChange={handleRename}
+                autoFocus
+                onClick={(e) => e.preventDefault()}
+              />
+            </form>
+          ) : (
+            <span className={editing ? 'editing' : ''} onClick={(e) => e.preventDefault()} onDoubleClick={handleEdit}>{rename}</span>
+          )}
+      {editingAll && <img className="delete" src="/images/bin.png" onClick={handleDelete}/>}
+      <style jsx>
+      {`
+        img {
+          width: 20px;
+          height: 20px;
           vertical-align: middle;
-          margin-right: 6px;
-        }
-
-        .bin-wrapper {
-          display: inline;
           cursor: pointer;
-          vertical-align: middle;
-          display: none;
         }
 
-        label {
-          font-size: 16px;
+        .delete {
+          width: 16px;
+          height: 16px;
+          margin-left: 10px;
         }
 
-        img:hover {
-          cursor: pointer !important;
+        .edit-form {
+          width: 100%;
+          display: inline;
         }
 
-        button {
-          border: none;
-          padding: 0;
+        .item-field {
+                border: none;
+                background-color: transparent;
+                display: inline;
+                padding: 0;
+                font-family: inherit;
+                font-size: 16px;
+                margin-left: .25rem;
+                outline: none;
+              }
+
+        span {
+          margin-left: .25rem;
         }
-      `}</style>
+      `}
+      </style>
     </div>
-  );
-};
+  )
+}
 
-export default Item;
+export default Item

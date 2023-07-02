@@ -1,26 +1,18 @@
-import prisma from '../../../../lib/prisma';
+import prisma from '../../../../../../../lib/prisma';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '../../auth/[...nextauth]';
+import { authOptions } from '../../../../../auth/[...nextauth]';
 import { useRouter } from 'next/router';
 
 export default async function handle(req, res) {
   const session = await getServerSession(req, res, authOptions);
-  const id = parseInt(req.query.id)
+  const { categoryId } = req.query
 
-  let categoryToUpdate = await prisma.category.findUnique({
-    where: {
-      id: id
-    }
-  })
-  if(req.method === "GET") {
-    res.json({ success: "Hello from " + categoryToUpdate.name})
-  }
   if(req.method === "PATCH") {
     const { rename, category } = req.body
     if(rename) {
       await prisma.category.update({
         where: {
-          id: id
+          id: parseInt(categoryId, 10)
         },
         data: {
           name: rename
@@ -32,7 +24,7 @@ export default async function handle(req, res) {
   if(req.method === "DELETE") {
     await prisma.category.delete({
       where: {
-        id: id
+        id: parseInt(categoryId, 10)
       }
     })
   }
