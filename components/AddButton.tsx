@@ -30,6 +30,7 @@ const AddButton: React.FC<Props> = (props) => {
         button {
           border: none;
           display: inline;
+          background-color: transparent;
         }
         div {
           display: flex;

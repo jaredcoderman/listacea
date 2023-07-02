@@ -21,7 +21,7 @@ const fetchList = async (url: string) => {
 const ListShow = (props) => {
   const router = useRouter()
   const id = router.query.id && router.query.id[0]
-  const [editingAll, setEditingAll] = useState(false)
+  const [editingAll, setEditingAll] = useState(true)
 
 
   const url = id ? `/api/v1/list/${id}` : null

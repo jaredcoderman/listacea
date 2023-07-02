@@ -10,7 +10,6 @@ export default async function handle(req, res) {
   if (req.method === "POST") {
     const { newItem } = req.body
     const { categoryId } = req.query
-    console.log(newItem, categoryId)
     const result = await prisma.item.create({
       data: {
         name: newItem,
