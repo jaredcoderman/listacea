@@ -5,11 +5,12 @@ export type Props = {
   adding: boolean;
   route: string;
   placeholder: string;
+  setEditingAll: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const AddForm: React.FC<Props> = (props) => {
   const [name, setListName] = useState("")
-  const { adding, route, placeholder } = props
+  const { adding, route, placeholder, setEditingAll } = props
 
   const handleChange = e => {
     if(e.currentTarget.value.length > 20) return
@@ -25,6 +26,7 @@ const AddForm: React.FC<Props> = (props) => {
       credentials: "include"
     })
     setListName("")
+    setEditingAll(true)
     mutate(`/api/v1/${route}`)
   }
 

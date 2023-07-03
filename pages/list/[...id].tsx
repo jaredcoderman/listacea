@@ -21,7 +21,7 @@ const fetchList = async (url: string) => {
 const ListShow = (props) => {
   const router = useRouter()
   const id = router.query.id && router.query.id[0]
-  const [editingAll, setEditingAll] = useState(true)
+  const [editingAll, setEditingAll] = useState(false)
 
 
   const url = id ? `/api/v1/list/${id}` : null
@@ -39,7 +39,7 @@ const ListShow = (props) => {
   const { data: categories } = useSWR(categoryUrl, fetchCategories)
 
   const categoryMap = categories ? categories.map(category => {
-    return <Category editingAll={editingAll} category={category} key={category.id}/>
+    return <Category editingAll={editingAll}category={category} key={category.id}/>
   }) : null
 
   return (
@@ -48,7 +48,7 @@ const ListShow = (props) => {
         <h1>{list && list.name}</h1>
         <img onClick={() => setEditingAll(!editingAll)} className="edit-button" src={editingAll ? "/images/editing.png": '/images/edit.png'} />
         {categoryMap}
-        <AddButton placeholder="new category" imgSrc="new-category.png" route={`list/${id}/category`}/>
+        <AddButton setEditingAll={setEditingAll} placeholder="new category" imgSrc="new-category.png" route={`list/${id}/category`}/>
       </div>
       <style jsx>
       {`

@@ -7,14 +7,22 @@ export type ListProps = {
   id: number;
 }
 
-const List = props => {
-  const { list } = props
+type Props = {
+  list: ListProps;
+  editingLists: boolean;
+}
+
+const List: React.FC<Props> = (props) => {
+  const { list, editingLists } = props
   const [editing, setEditing] = useState(false)
   const [rename, setRename] = useState(list.name)
   const inputRef = useRef(null)
 
   const handleEdit = (e) => {
-    setEditing(!editing)
+    if(editingLists) {
+      e.preventDefault()
+      setEditing(!editing)
+    }
   }
   
   const handleRename = async (e) => {
@@ -72,7 +80,7 @@ const List = props => {
 
   return (
     <Link href={`./list/${list.id}`} className="link">
-      <div className={editing ? 'editing' : ''}>
+      <div onClick={handleEdit} className={editing ? 'editing' : ''}>
         {editing ? (
           <form onSubmit={handleSubmit}>
             <input
@@ -85,9 +93,9 @@ const List = props => {
             />
           </form>
         ) : (
-          <span onClick={(e) => e.preventDefault()} onDoubleClick={handleEdit}>{rename}</span>
+          <span>{rename}</span>
         )}
-        <img src="/images/bin.png" onClick={handleDelete}/>
+        {editingLists && <img src="/images/bin.png" onClick={handleDelete}/>}
         <style jsx>
           {`
             form {
@@ -102,7 +110,6 @@ const List = props => {
               float: right;
               margin-right: 8px;
               margin-top: 2px;
-              opacity: 0;
               z-index: 1
             }
 
@@ -119,10 +126,6 @@ const List = props => {
               outline: none;
             }
 
-            img:hover {
-              color: white;
-            }
-
             div {
               background-color: transparent;
               padding: 4px 0px 4px 15px;
@@ -133,15 +136,6 @@ const List = props => {
               text-align: left;
               margin: 5px;
               z-index: 0
-            }
-
-            div:hover {
-              background-color: white;
-              transition: .25s;
-            }
-
-            div:hover img {
-              opacity: 1;
             }
 
             .editing {

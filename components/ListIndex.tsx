@@ -1,11 +1,16 @@
 import React from "react"
-import List from "./List"
+import List, { ListProps } from "./List"
 
-const ListIndex = (props) => {
-  const { lists } = props
+type Props = {
+  lists: ListProps[];
+  editingLists: boolean;
+}
+
+const ListIndex: React.FC<Props> = (props) => {
+  const { lists, editingLists } = props
   const listMap = lists.map(list => {
     return(
-      <List list={list} key={list.id}/>
+      <List editingLists={editingLists} list={list} key={list.id}/>
     )
   })
 
