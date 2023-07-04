@@ -57,6 +57,12 @@ const ListShow: React.FC<Props> = (props) => {
         margin: 0 auto; /* Center the container horizontally */
       }
 
+      @media only screen and (max-width: 800px) {
+            .container {
+              max-width: 90%;
+            }
+          }
+
       .ingredientList {
         margin-left: 0;
       }
