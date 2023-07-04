@@ -1,13 +1,14 @@
 import { useRouter } from "next/router"
 import Layout from "../../components/Layout"
 import useSWR from "swr"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import AddButton from "../../components/AddButton"
 import Category from "../../components/Category"
 
 export type List = {
   id: number
   name: string
+  hasBeenChecked: boolean;
 }
 
 const fetchList = async (url: string) => {
@@ -18,23 +19,22 @@ const fetchList = async (url: string) => {
   return responseBody.list
 }
 
+const fetchCategories = async (url: string) => {
+  const response = await fetch(url, {
+    method: "GET",
+  });
+  const responseBody = await response.json();
+  return responseBody.categories;
+};
+
 const ListShow = (props) => {
   const router = useRouter()
   const id = router.query.id && router.query.id[0]
-  const [editingAll, setEditingAll] = useState(false)
 
+  const [editingAll, setEditingAll] = useState(false)
 
   const url = id ? `/api/v1/list/${id}` : null
   const { data: list } = useSWR(url, fetchList)
-
-  const fetchCategories = async (url: string) => {
-    const response = await fetch(url, {
-      method: "GET",
-    });
-    const responseBody = await response.json();
-    return responseBody.categories;
-  };
-
   const categoryUrl = id ? `${url}/category` : null
   const { data: categories } = useSWR(categoryUrl, fetchCategories)
 
@@ -46,9 +46,10 @@ const ListShow = (props) => {
     <Layout>
       <div>
         <h1>{list && list.name}</h1>
-        <img onClick={() => setEditingAll(!editingAll)} className="edit-button" src={editingAll ? "/images/editing.png": '/images/edit.png'} />
+        {categories && categories.length > 0 && <img onClick={() => setEditingAll(!editingAll)} className="edit-button" src={editingAll ? "/images/editing.png": '/images/edit.png'} />}
         {categoryMap}
         <AddButton setEditingAll={setEditingAll} placeholder="new category" imgSrc="new-category.png" route={`list/${id}/category`}/>
+        <hr></hr>
       </div>
       <style jsx>
       {`

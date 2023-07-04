@@ -14,6 +14,7 @@ datasource db {
 
 model Item {
   id Int @id @default(autoincrement()) 
+  createdAt  DateTime? @default(now())
   name String
   purchased Boolean @default(false)
   category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
@@ -22,14 +23,26 @@ model Item {
 
 model Category {
   id Int @id @default(autoincrement()) 
+  createdAt  DateTime? @default(now())
   name String @db.VarChar(20)
   list List? @relation(fields: [listId], references: [id], onDelete: Cascade)
   listId Int?
   items Item[]
 }
 
+model Recipe {
+  id Int @id @default(autoincrement()) 
+  createdAt  DateTime? @default(now())
+  steps String[]
+  ingredients String[]
+  name String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+}
+
 model List {
   id Int @id @default(autoincrement()) 
+  createdAt  DateTime? @default(now())
   name String
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
@@ -73,6 +86,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  recipes       Recipe[]
   lists         List[]
 }
 

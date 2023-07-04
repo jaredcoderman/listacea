@@ -11,7 +11,12 @@ class RecipeScraper {
     await this.page.goto(link)
     const ingredients = await this.page.evaluate(() => Array.from(document.querySelectorAll(".o-Ingredients__a-Ingredient--CheckboxLabel"), (e) => e.innerHTML.replace("&nbsp;", "")))
     ingredients.shift()
-    return ingredients
+    let steps = await this.page.evaluate(() => Array.from(document.querySelectorAll(".o-Method__m-Step"), (e) => e.innerHTML.trimStart().trimEnd().replace(/\n/g, "")))
+
+    const name = await this.page.evaluate(() =>
+    document.querySelector(".o-AssetTitle__a-HeadlineText").innerHTML
+  );
+    return { name: name,ingredients: ingredients, steps: steps}
   }
 }
 

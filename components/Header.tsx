@@ -145,7 +145,12 @@ const Header: React.FC = () => {
     );
     right = (
       <div className="right">
-        <span>{session.user.name}</span>
+        <Link legacyBehavior href="/recipes">
+          <a className="recipe-button" data-active={isActive("/recipes")}>
+            Recipes
+        </a>
+        </Link>
+        <span>{session.user.email}</span>
         <button className='button' onClick={() => signOut()}>
           <a>Log out</a>
         </button>
@@ -154,6 +159,11 @@ const Header: React.FC = () => {
             text-decoration: none;
             color: var(--geist-foreground);
             display: inline-block;
+            font-size: 14px;
+          }
+
+          .recipes-button {
+            padding: 1px;
           }
 
           span {
@@ -176,18 +186,24 @@ const Header: React.FC = () => {
             margin-left: auto;
           }
 
-          .right a {
+          .right .recipe-button {
             border: 1px solid #000;
-            padding: 0.5rem 1rem;
-            
+            padding: 8px 10px 8px 10px;
             border-radius: 3px;
           }
 
+          .recipe-button {
+            margin-right: 1rem;
+          }
+
           .button {
+            font-family: inherit;
             border: none;
             color: #000;
             background-color: transparent;
           }
+
+          .button 
         `}</style>
       </div>
     );

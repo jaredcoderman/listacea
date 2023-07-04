@@ -33,7 +33,7 @@ const List = (props) => {
     <Layout>
       <main>
         <h1>Your Lists</h1>
-        <img onClick={() => setEditingLists(!editingLists)} src={editingLists ? "/images/editing.png" : "/images/edit.png"} />
+        {lists && lists.length > 0 && <img onClick={() => setEditingLists(!editingLists)} src={editingLists ? "/images/editing.png" : "/images/edit.png"} />}
         {lists && lists.length > 0 && <ListIndex lists={lists} editingLists={editingLists} />}
         <AddButton setEditingAll={null} placeholder="new list" imgSrc="new-file.png" route="list"/>
       </main>

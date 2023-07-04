@@ -26,7 +26,7 @@ const AddForm: React.FC<Props> = (props) => {
       credentials: "include"
     })
     setListName("")
-    setEditingAll(true)
+    if(setEditingAll) setEditingAll(true)
     mutate(`/api/v1/${route}`)
   }
 

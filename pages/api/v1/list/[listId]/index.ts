@@ -5,6 +5,7 @@ import { authOptions } from '../../../auth/[...nextauth]';
 export default async function handle(req, res) {
   const session = await getServerSession(req, res, authOptions);
   const { listId } = req.query
+  const { hasBeenChecked, isGroceryList } = req.body
   if (req.method === "GET") {
     if(listId) {  
       const list = await prisma.list.findUnique({
@@ -27,7 +28,7 @@ export default async function handle(req, res) {
   }
   if (req.method === "PATCH") {
     const { rename } = req.body
-    if(listId && rename) {  
+    if(rename) {  
       const list = await prisma.list.update({ 
         where: {
           id: parseInt(listId, 10)
