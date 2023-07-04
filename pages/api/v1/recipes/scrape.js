@@ -1,9 +1,23 @@
 const puppeteer = require("puppeteer")
+require("dotenv").config
+const chromium = require('chrome-aws-lambda')
+
+// const browser = await puppeteer.launch( { args: ['--no-sandbox'] } );
 
 class RecipeScraper {
 
   async init() {
-    this.browser = await puppeteer.launch({ headless: "new" })
+    if(!process.env.TESTING) {
+      this.browser = await chromium.puppeteer.launch({
+          args: [...chromium.args, "--hide-scrollbars", "--disable-web-security"],
+          defaultViewport: chromium.defaultViewport,
+          executablePath: await chromium.executablePath,
+          headless: true,
+          ignoreHTTPSErrors: true,
+      })
+    } else {
+      this.browser = await puppeteer.launch({ headless: "new" })
+    }
     this.page = await this.browser.newPage()
   }
 
