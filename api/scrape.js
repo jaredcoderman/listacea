@@ -1,4 +1,4 @@
-const puppeteer = require('puppeteer-core')
+const puppeteer = require('puppeteer')
 let chromium = require('chrome-aws-lambda')
 require("dotenv").config()
 
