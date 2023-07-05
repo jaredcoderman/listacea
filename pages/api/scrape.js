@@ -1,6 +1,7 @@
-const puppeteer = require("puppeteer")
-require("dotenv").config
-const chromium = require('chrome-aws-lambda')
+const puppeteer = require('puppeteer')
+let chromium = require('chrome-aws-lambda')
+require("dotenv").config()
+
 
 // const browser = await puppeteer.launch( { args: ['--no-sandbox'] } );
 
