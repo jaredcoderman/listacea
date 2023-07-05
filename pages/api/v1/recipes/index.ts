@@ -10,7 +10,6 @@ export default async function handle(req, res) {
   if(req.method === "GET") {
     if(link) {
       let scraper = new RecipeScraper()
-      await scraper.init()
       const scrapedData = await scraper.getFoodNetworkRecipe(link)
       await prisma.recipe.create({
         data: {
