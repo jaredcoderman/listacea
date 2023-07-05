@@ -2,6 +2,7 @@ import { useRouter } from "next/router"
 import Layout from "../../components/Layout"
 import useSWR from "swr"
 import React, { useEffect, useState } from "react"
+import { useSession } from "next-auth/react"
 
 export type Recipe = {
   id: number;
@@ -24,6 +25,12 @@ const fetchRecipe = async (url: string) => {
 
 const ListShow: React.FC<Props> = (props) => {
   const router = useRouter()
+  const { data: session, status } = useSession();
+
+  if (status === "unauthenticated") {
+    router.push("/");
+  }
+  
   const id = router.query.id && router.query.id[0]
 
   const url = id ? `/api/v1/recipes/${id}` : null;

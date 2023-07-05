@@ -183,7 +183,7 @@ const Category: React.FC<Props> = (props) => {
               .new-item {
                 opacity: .8;
                 border: none;
-                width: 50%;
+                width: 55%;
                 border-bottom: solid 1px black;
                 border-radius: 3px;
                 outline: none;
@@ -204,7 +204,7 @@ const Category: React.FC<Props> = (props) => {
                 margin-bottom: .5rem;
                 cursor: pointer;
                 text-align: left;
-                width: 300px;
+                width: 200px;
                 z-index: 0
               }
 

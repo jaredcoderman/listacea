@@ -26,7 +26,7 @@ const Home = (props) => {
           <p>2. Make lists (i.e. groceries)</p>
           <p>3. Make categories for your lists</p>
           <p>4. Put items in those categories</p>
-          <p>5. Check off items when purchased and uncheck when you need more</p>
+          <p>5. Check and uncheck items</p>
         </div>
       </div>
       <style jsx>{`

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react"
 import Layout from "../components/Layout"
 import useSWR, { mutate } from "swr"
 import Link from "next/link"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/router"
 
 const fetchRecipes = async (url: string) => {
   const response = await fetch(url, {
@@ -12,8 +14,15 @@ const fetchRecipes = async (url: string) => {
 }
 
 const Recipes = () => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
   const [link, setLink] = useState("")
   const [valid, setValid] = useState(false)
+
+  if (status === "unauthenticated") {
+    router.push("/");
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
