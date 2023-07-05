@@ -62,8 +62,9 @@ const Item: React.FC<Props> = (props) => {
     setRename(e.currentTarget.value)
   }
 
-  const handleEdit = () => {
-    setEditing(!editing)
+  const handleEdit = (e) => {
+    e.preventDefault()
+    if(editingAll) setEditing(true)
   }
 
   useEffect(() => {
@@ -110,7 +111,7 @@ const Item: React.FC<Props> = (props) => {
               />
             </form>
           ) : (
-            <span className={editing ? 'editing' : ''} onClick={(e) => e.preventDefault()} onDoubleClick={handleEdit}>{rename}</span>
+            <span className={editing ? 'editing' : ''} onClick={(e) => handleEdit(e)}>{rename}</span>
           )}
       {editingAll && <img className="delete" src="/images/bin.png" onClick={handleDelete}/>}
       <style jsx>
@@ -134,15 +135,18 @@ const Item: React.FC<Props> = (props) => {
         }
 
         .item-field {
-                border: none;
-                background-color: transparent;
-                display: inline;
-                padding: 0;
-                font-family: inherit;
-                font-size: 16px;
-                margin-left: .25rem;
-                outline: none;
-              }
+          border: none;
+          border-color: orange;
+          box-shadow: 0 0 5px orange;
+          background-color: white;
+          display: inline;
+          padding-left: 3px;;
+          font-family: inherit;
+          font-size: 16px;
+          margin-left: .25rem;
+          border-radius: 3px;
+          outline: none;
+        }
 
         span {
           margin-left: .25rem;

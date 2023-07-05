@@ -25,7 +25,8 @@ const Category: React.FC<Props> = (props) => {
   const inputRef = useRef(null)
 
   const handleEdit = (e) => {
-    setEditing(!editing)
+    e.preventDefault()
+    if(editingAll) setEditing(true)
   }
 
   const handleRename = async (e) => {
@@ -123,7 +124,7 @@ const Category: React.FC<Props> = (props) => {
               />
             </form>
           ) : (
-            <span className={editing ? 'editing' : ''} onClick={(e) => e.preventDefault()} onDoubleClick={handleEdit}>{rename}</span>
+            <span className={editing ? 'editing' : ''} onClick={(e) => handleEdit(e)}>{rename}</span>
           )}
           {editingAll && <img src="/images/bin.png" onClick={handleDelete}/>}
         </div>
@@ -142,7 +143,9 @@ const Category: React.FC<Props> = (props) => {
 
               .editing-form {
                 border-color: orange;
-                outline: 1px solid black;
+                outline: 1px solid orange;
+                box-shadow: 0 0 5px orange;
+                background-color: white;
                 border-radius: 3px;
                 padding-left: 4px;
                 padding-bottom: 2px; 
