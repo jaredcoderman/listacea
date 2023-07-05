@@ -33,15 +33,30 @@ const Recipes = () => {
   }
 
   const handleChange = (e) => {
-    setLink(e.currentTarget.value)
+    if (e.currentTarget.value.endsWith('.amp')) {
+      setLink(e.currentTarget.value.slice(0, -4))
+    } else {
+      setLink(e.currentTarget.value)
+    }
   }
 
-  const handleDelete = async (e) => {
-
+  const handleDelete = async (e, id) => {
+    e.preventDefault()
+    const verify = confirm("Are you sure you want to delete this recipe?")
+    if(!verify) return 
+    try {
+      const response = await fetch(`/api/v1/recipes/${id}`, {
+        method: "DELETE"
+      })
+      if(!response.ok) throw new Error(`${response.status} (${response.statusText})`)
+      mutate("/api/v1/recipes")
+    } catch(err) {
+      console.error(err)
+    }
   }
 
   useEffect(() => {
-    const linkRegex = /^https?:\/\/(?:www\.)?foodnetwork\.com\/recipes\/[\w-]+\/[\w-]+-\d+$/;
+    const linkRegex = /^https?:\/\/(?:www\.)?foodnetwork\.com\/recipes\/[\w-]+\/[\w-]+-\d+$/
     setValid(linkRegex.test(link))
   }, [link])
 
@@ -52,7 +67,7 @@ const Recipes = () => {
       <Link key={recipe.id} className="link" href={`/recipes/${recipe.id}`}>
         <div>
           <span>{recipe.name}</span>
-          <img src="/images/bin.png" onClick={handleDelete}/>
+          <img src="/images/bin.png" onClick={(e) => handleDelete(e, recipe.id)}/>
         </div>
         <style jsx>
         {`

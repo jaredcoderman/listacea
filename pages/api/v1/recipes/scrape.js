@@ -18,6 +18,7 @@ class RecipeScraper {
       $(".o-Ingredients__a-Ingredient--CheckboxLabel").each((index, element) => {
         ingredients.push($(element).text().replace(/\u00A0/g, ""));
       });
+      ingredients.shift()
       
       const steps = [];
       $(".o-Method__m-Step").each((index, element) => {
