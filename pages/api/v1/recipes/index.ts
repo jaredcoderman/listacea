@@ -1,7 +1,7 @@
 import prisma from '../../../../lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '../../auth/[...nextauth]';
-import RecipeScraper from '../../../../api/scrape';
+import RecipeScraper from '../../../recipes/scrape';
 
 export default async function handle(req, res) {
   const session = await getServerSession(req, res, authOptions);
