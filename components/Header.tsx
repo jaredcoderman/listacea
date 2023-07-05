@@ -172,11 +172,11 @@ const Header: React.FC = () => {
             padding-right: 1rem;
           }
 
-          @media only screen and (max-width: 800px) {
-            span {
-              display: none;
+            @media only screen and (max-width: 800px) {
+              span {
+                display: none;
+              }
             }
-          }
 
           a + a {
             margin-left: 1rem;

@@ -6,6 +6,7 @@ export default async function handle(req, res) {
   const session = await getServerSession(req, res, authOptions);
   if (req.method === "POST") {
     const { name } = req.body;
+    // openai shit here
     await prisma.list.create({
       data: {
         user: { connect: { email: session.user.email }},
