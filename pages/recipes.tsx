@@ -64,6 +64,23 @@ const Recipes = () => {
     }
   }
 
+  const generateRecipe = async () => {
+    const starterIngredients = prompt("Type at least 3 starter ingredients. Comma separated i.e. 'chicken, broccoli, rice'")
+    try {
+      const response = await fetch("/api/v1/recipes", {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({starterIngredients: starterIngredients}),
+        credentials: "include"
+      })
+      if(!response.ok) throw new Error(`${response.status} (${response.statusText})`)
+      mutate("/api/v1/recipes")
+    } catch(err) {
+      console.error(err)
+    }
+
+  }
+
   useEffect(() => {
     const linkRegex = /^https?:\/\/(?:www\.)?foodnetwork\.com\/recipes\/[\w-]+\/[\w-]+-\d+$/
     setValid(linkRegex.test(link))
@@ -74,13 +91,13 @@ const Recipes = () => {
   const recipeMap = recipes ? recipes.map(recipe => {
     return (
       <Link key={recipe.id} className="link" href={`/recipes/${recipe.id}`}>
-        <div>
+        <div className="recipe">
           <span>{recipe.name}</span>
           <img src="/images/bin.png" onClick={(e) => handleDelete(e, recipe.id)}/>
         </div>
         <style jsx>
         {`
-            div {
+            .recipe {
               background-color: transparent;
               padding: 4px 0px 4px 15px;
               border: solid 1px black;
@@ -112,7 +129,6 @@ const Recipes = () => {
     <Layout>
       <main>
         <h1>Your Recipes</h1>
-
         <form onSubmit={handleSubmit}>
           <input onChange={handleChange} value={link} placeholder="food network link" type="text" />
         </form>
@@ -122,6 +138,9 @@ const Recipes = () => {
         <em className="fine-print">i.e. https://www.foodnetwork.com/recipes/anne-burrell/chicken-enchiladas-3598928</em>
         <div className="recipe-container">
           {recipeMap}
+        </div>
+        <div onClick={generateRecipe} className="recipe">
+          <span className="surprise-text">Surprise Me!</span>
         </div>
       </main>
       <style jsx>
@@ -171,6 +190,39 @@ const Recipes = () => {
         span {
           margin-top: .5rem;
           font-weight: bold;
+        }
+
+        .surprise-text {
+          font-weight: normal !important;
+        }
+
+        .recipe {
+          background-color: transparent;
+          padding: 4px 0px;
+          border: solid 1px black;
+          color: black;
+          border-radius: 5px;
+          cursor: pointer;
+          width: 150px;
+          text-align: center;
+          margin: 5px;
+          z-index: 0
+        }
+
+        .recipe:hover {
+          background-color: black;
+          color: white;
+          transition: .25s;
+        }
+
+        img {
+          height: 18px;
+          width: 18px;
+          vertical-align: middle;
+          float: right;
+          margin-right: 8px;
+          margin-top: 2px;
+          z-index: 1
         }
       `}
       </style>
