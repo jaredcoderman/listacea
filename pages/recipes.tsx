@@ -98,9 +98,9 @@ const Recipes = () => {
         <style jsx>
         {`
             .recipe {
-              background-color: transparent;
-              padding: 4px 0px 4px 15px;
-              border: solid 1px black;
+              background-color: var(--main-button-bg);
+              color: var(--main-button-color);
+              padding: 6px 0px 6px 15px;
               border-radius: 5px;
               cursor: pointer;
               width: 250px;
@@ -155,6 +155,7 @@ const Recipes = () => {
           margin-top: 1.5rem;
           display: flex;
           flex-direction: column;
+          font-size: 16px;
           align-items: center;
         }
 
@@ -206,7 +207,8 @@ const Recipes = () => {
           width: 150px;
           text-align: center;
           margin: 5px;
-          z-index: 0
+          z-index: 0;
+          font-size: 16px;
         }
 
         .recipe:hover {

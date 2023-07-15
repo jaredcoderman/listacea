@@ -15,7 +15,7 @@ const Header: React.FC = () => {
     <div className="left">
       <Link legacyBehavior href={activePath}>
         <a className="bold" data-active={isActive(activePath)}>
-          Listify
+          listacean
         </a>
       </Link>
       <style jsx>{`
@@ -47,7 +47,7 @@ const Header: React.FC = () => {
       <div className="left">
         <Link legacyBehavior href={activePath}>
           <a className="bold" data-active={isActive(activePath)}>
-            Listify
+            listacean
           </a>
         </Link>
         <style jsx>{`
@@ -87,7 +87,7 @@ const Header: React.FC = () => {
     right = (
       <div className="right">
         <Link legacyBehavior href="/api/auth/signin">
-          <a data-active={isActive('/signup')}>Log in</a>
+          <a data-active={isActive('/signup')}>Login</a>
         </Link>
         <style jsx>{`
           a {
@@ -105,9 +105,14 @@ const Header: React.FC = () => {
           }
 
           .right a {
-            border: 1px solid #000;
-            padding: 0.5rem 1rem;
+            font-size: 16px;
+            padding: 0.7rem 1.4rem;
             border-radius: 3px;
+            background-color: var(--secondary-button-bg);
+          }
+
+          .right a:hover {
+            transform: translate(0, -3px);
           }
         `}</style>
       </div>
@@ -119,7 +124,7 @@ const Header: React.FC = () => {
       <div className="left">
         <Link legacyBehavior href={activePath}>
           <a className="bold" data-active={isActive(activePath)}>
-            Listify
+            listacean
           </a>
         </Link>
         <style jsx>{`
@@ -187,9 +192,14 @@ const Header: React.FC = () => {
           }
 
           .right .recipe-button {
-            border: 1px solid #000;
-            padding: 8px 10px 8px 10px;
+            background-color: var(--secondary-button-bg);
+            color: var(--color);
+            padding: 11px 14px 11px 14px;
             border-radius: 3px;
+          }
+
+          .right .recipe-button:hover {
+            transform: translate(0, -3px);
           }
 
           .recipe-button {

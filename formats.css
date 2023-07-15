@@ -1,0 +1,15 @@
+:root {
+  --main-button-bg: #0163cb;
+  --bg: #000000;
+  --secondary-button-bg: #001e3d;
+  --main-button-color: #000000;
+  --color: #fafcff;
+}
+
+:root {
+  --main-button-bg: #78b4ed;
+  --bg: #f1fdfd;
+  --secondary-button-bg: #f8c9ca;
+  --main-button-color: #000000;
+  --color: #010504;
+}

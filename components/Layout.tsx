@@ -14,6 +14,14 @@ const Layout: React.FC<Props> = (props) => (
         box-sizing: border-box;
       }
 
+      :root {
+        --main-button-bg: #c52b4f;
+        --bg: #ffffff;
+        --secondary-button-bg: #edbdab;
+        --main-button-color: white;
+        --color: #092a22;
+      }
+
       .link {
         text-decoration: none;
         color: var(--geist-foreground);
@@ -28,12 +36,20 @@ const Layout: React.FC<Props> = (props) => (
 
       body {
         margin: 0;
-        padding: 0;
-        font-size: 16px;
+        padding: 0 3rem;
+        font-size: 18px;
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
           Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
           "Segoe UI Symbol";
-        background: rgba(0, 0, 0, 0.05);
+        background: var(--bg);
+        color: var(--color);
+      }
+
+      @media only screen and (max-width: 800px) {
+        body {
+          font-size: 17px;
+          padding: 0 1rem;
+        }
       }
 
       input,

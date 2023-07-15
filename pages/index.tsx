@@ -14,7 +14,7 @@ const Home = (props) => {
     <Layout>
       <div className="call-to-action">
         <h1>Welcome</h1>
-        <h4>Groceries Made Simple</h4>
+        <h4>Lists Made Simple</h4>
         <Link legacyBehavior href="/api/auth/signin">
           <a>Get Started</a>
         </Link>
@@ -51,6 +51,7 @@ const Home = (props) => {
         h4 {
           text-align: center;
           font-weight: normal;
+          font-size: 15px;
         }
 
         h3 {
@@ -60,24 +61,20 @@ const Home = (props) => {
 
         a {
           text-decoration: none;
-          background-color: #transparent;
-          color: black;
+          background-color: var(--main-button-bg);
+          color: var(--main-button-color);
           border-radius: 5px;
-          font-size: 14px;
-          background-color: white;
-          border: solid 1px black;
+          font-size: 16px;
           margin-left: auto;
           margin-right: auto;
-          font-weight: bold;
-          padding: 5px 10px;
+          padding: 12px 18px;
           transition: .25s;
         }
 
         a:hover {
-          background-color: black;
-          color: white;
+          transform: translate(0, -3px);
+          box-shadow: 0 20px 80px -10px var(--main-button-bg);
           transition: .25s;
-          padding: 8px 14px;
         }
       `}</style>
     </Layout>

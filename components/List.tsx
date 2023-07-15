@@ -116,7 +116,7 @@ const List: React.FC<Props> = (props) => {
             input {
               border: none;
               background-color: transparent;
-              font-weight: bold;
+              font-weight: normal;
               display: inline;
               padding: 0;
               font-family: inherit;
@@ -127,15 +127,23 @@ const List: React.FC<Props> = (props) => {
             }
 
             div {
-              background-color: transparent;
-              padding: 4px 0px 4px 15px;
-              border: solid 1px black;
+              background-color: var(--main-button-bg);
+              color: var(--main-button-color);
+              padding: 7px 0px 7px 15px;
+              font-size: 17px;
               border-radius: 5px;
               cursor: pointer;
               width: 250px;
               text-align: left;
               margin: 5px;
-              z-index: 0
+              z-index: 0;
+              transition: .25s;
+            }
+
+            div:hover {
+              background-color: black;
+              color: white;
+              transform: translate(0, -3px);
             }
 
             .editing {
@@ -146,7 +154,7 @@ const List: React.FC<Props> = (props) => {
             }
 
             span {
-              font-weight: bold;
+              font-weight: normal;
             }
           `}
         </style>
