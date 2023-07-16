@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react"
 import AddButton from "../../components/AddButton"
 import Category from "../../components/Category"
 import { useSession } from "next-auth/react"
+import LoadingSpinner from "../../components/LoadingSpinner"
 
 export type List = {
   id: number
@@ -46,16 +47,17 @@ const ListShow = (props) => {
   const { data: categories } = useSWR(categoryUrl, fetchCategories)
 
   const categoryMap = categories ? categories.map(category => {
-    return <Category editingAll={editingAll}category={category} key={category.id}/>
+    return <Category editingAll={editingAll} category={category} key={category.id}/>
   }) : null
 
   return (
     <Layout>
       <div>
+        {!list && <LoadingSpinner />}
         <h1>{list && list.name}</h1>
         {categories && categories.length > 0 && <img onClick={() => setEditingAll(!editingAll)} className="edit-button" src={editingAll ? "/images/editing.png": '/images/edit.png'} />}
         {categoryMap}
-        <AddButton setEditingAll={setEditingAll} placeholder="new category" imgSrc="new-category.png" route={`list/${id}/category`}/>
+        {categories && <AddButton setEditingAll={setEditingAll} placeholder="new category" imgSrc="new-category.png" route={`list/${id}/category`}/>}
         <hr></hr>
       </div>
       <style jsx>

@@ -16,15 +16,17 @@ export default async function handle(req, res) {
     return res.json()
   }
   if (req.method === "GET") {
-    const lists = await prisma.list.findMany({
-      where: {
-        user: session.user
-      },
-      orderBy: {
-        id: "asc"
-      }
-    })
-    return res.json({ lists: lists })
+    if(session) {
+      const lists = await prisma.list.findMany({
+        where: {
+          user: session.user
+        },
+        orderBy: {
+          id: "asc"
+        }
+      })
+      return res.json({ lists: lists })
+    }
   }
-  return res.json({ error: "No method"})
+  return res.status(204).send()
 }
