@@ -4,6 +4,7 @@ import useSWR, { mutate } from "swr"
 import Link from "next/link"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
+import LoadingSpinner from "../components/LoadingSpinner"
 
 const fetchRecipes = async (url: string) => {
   const response = await fetch(url, {
@@ -19,6 +20,7 @@ const Recipes = () => {
 
   const [link, setLink] = useState("")
   const [valid, setValid] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   if (status === "unauthenticated") {
     router.push("/");
@@ -67,6 +69,7 @@ const Recipes = () => {
   const generateRecipe = async () => {
     const starterIngredients = prompt("Type at least 3 starter ingredients. Comma separated i.e. 'chicken, broccoli, rice'")
     try {
+      setLoading(true); // Set loading state to true
       const response = await fetch("/api/v1/recipes", {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
@@ -77,8 +80,9 @@ const Recipes = () => {
       mutate("/api/v1/recipes")
     } catch(err) {
       console.error(err)
+    } finally {
+      setLoading(false)
     }
-
   }
 
   useEffect(() => {
@@ -136,6 +140,7 @@ const Recipes = () => {
         {link.length > 0 && valid && <span className="valid">Valid Link</span>}
         <span className="fine-print">As of now, recipe links must be from FoodNetwork</span>
         <em className="fine-print">i.e. https://www.foodnetwork.com/recipes/anne-burrell/chicken-enchiladas-3598928</em>
+        {loading && <LoadingSpinner />}
         <div className="recipe-container">
           {recipeMap}
         </div>
