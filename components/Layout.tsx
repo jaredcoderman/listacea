@@ -15,11 +15,11 @@ const Layout: React.FC<Props> = (props) => (
       }
 
       :root {
-        --main-button-bg: #c52b4f;
+        --main-button-bg: #76aed0;
         --bg: #ffffff;
-        --secondary-button-bg: #edbdab;
-        --main-button-color: white;
-        --color: #092a22;
+        --secondary-button-bg: #e5c6b3;
+        --main-button-color: #000000;
+        --color: #010504;
       }
 
       .link {

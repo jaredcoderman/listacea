@@ -28,8 +28,9 @@ async function generateRecipe(ingredients) {
               type: 'array',
               items: {
                 "type": "string",
+                description: "the step without the step number"
               },
-              "description": "a comprehensive list of the steps in order to prepare the ingredients and cook the dish"
+              "description": "a comprehensive list of the steps in order to prepare the ingredients and cook the dish. does not include the step numbers."
             },
             ingredients: {
               type: 'array',

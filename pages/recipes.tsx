@@ -6,14 +6,6 @@ import { useSession } from "next-auth/react"
 import { useRouter } from "next/router"
 import LoadingSpinner from "../components/LoadingSpinner"
 
-const fetchRecipes = async (url: string) => {
-  const response = await fetch(url, {
-    method: "GET"
-  })
-  const responseBody = await response.json()
-  return responseBody.recipes
-}
-
 const Recipes = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -26,11 +18,22 @@ const Recipes = () => {
     router.push("/");
   }
 
+  const fetchRecipes = async (url: string) => {
+    setLoading(true)
+    const response = await fetch(url, {
+      method: "GET"
+    })
+    const responseBody = await response.json()
+    setLoading(false)
+    return responseBody.recipes
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLink("")
     if(!valid) return
     try {
+      setLoading(true)
       const response = await fetch(`/api/v1/recipes?link=${encodeURIComponent(link)}`, {
         method: "GET",
         headers: { 'Content-Type': 'application/json' },
@@ -40,6 +43,8 @@ const Recipes = () => {
       mutate("/api/v1/recipes")
     } catch(err) {
       console.error(err)
+    } finally {
+      setLoading(false)
     }
   }
 
