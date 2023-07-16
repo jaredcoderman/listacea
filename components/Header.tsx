@@ -15,7 +15,7 @@ const Header: React.FC = () => {
     <div className="left">
       <Link legacyBehavior href={activePath}>
         <a className="bold" data-active={isActive(activePath)}>
-          listacean
+          listacea
         </a>
       </Link>
       <style jsx>{`
