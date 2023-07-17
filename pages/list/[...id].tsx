@@ -79,12 +79,17 @@ const ListShow = (props) => {
           {categories && categories.length > 0 && <img onClick={() => setEditingAll(!editingAll)} className="edit-button" src={editingAll ? "/images/editing.png": '/images/edit.png'} />}
           {categories && <img onClick={handleShare} src="/images/share.png" />}
         </div>
-        {categoryMap}
-        {categories && <AddButton setEditingAll={setEditingAll} placeholder="new category" imgSrc="new-category.png" route={`list/${id}/category`}/>}
+        <div className='category-container'>
+          {categoryMap}
+        </div>
+        {categories && <AddButton bulkOption={true} setEditingAll={setEditingAll} placeholder="new category" imgSrc="new-category.png" route={`list/${id}/category`}/>}
 
       </div>
       <style jsx>
       {`
+        .category-container {
+          display: flex;
+        }
         div {
           display: flex;
           justify-content: center;

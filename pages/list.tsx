@@ -37,7 +37,7 @@ const List = (props) => {
         {lists && lists.length > 0 && <img onClick={() => setEditingLists(!editingLists)} src={editingLists ? "/images/editing.png" : "/images/edit.png"} />}
         {!lists && <LoadingSpinner />}
         {lists && lists.length > 0 && <ListIndex lists={lists} editingLists={editingLists} />}
-        <AddButton setEditingAll={null} placeholder="new list" imgSrc="new-file.png" route="list"/>
+        <AddButton bulkOption={false} setEditingAll={null} placeholder="new list" imgSrc="new-file.png" route="list"/>
       </main>
       <style jsx>{`
         h1 {

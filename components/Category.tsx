@@ -153,7 +153,6 @@ const Category: React.FC<Props> = (props) => {
 
               .outer {
                 margin-bottom: 2rem;
-                
               }
 
               img {
@@ -207,7 +206,7 @@ const Category: React.FC<Props> = (props) => {
                 margin-bottom: .5rem;
                 cursor: pointer;
                 text-align: left;
-                width: 200px;
+                width: 350px;
                 z-index: 0
               }
 

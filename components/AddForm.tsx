@@ -6,34 +6,64 @@ export type Props = {
   route: string;
   placeholder: string;
   setEditingAll: React.Dispatch<React.SetStateAction<boolean>>;
+  bulkOption: boolean;
 };
 
 const AddForm: React.FC<Props> = (props) => {
   const [name, setListName] = useState("")
-  const { adding, route, placeholder, setEditingAll } = props
+  const [bulkList, setBulkList] = useState("")
+  const [bulk, setBulk] = useState(false)
+  const { adding, route, placeholder, setEditingAll, bulkOption } = props
 
   const handleChange = e => {
-    if(e.currentTarget.value.length > 20) return
-    setListName(e.currentTarget.value)
+    if(bulk) {
+      setBulkList(e.currentTarget.value)
+    } else {
+      if(e.currentTarget.value.length > 20) return
+      setListName(e.currentTarget.value)
+    }
   }
 
   const handleSubmit = async e => {
     e.preventDefault()
-    await fetch(`/api/v1/${route}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name }),
-      credentials: "include"
-    })
-    setListName("")
-    if(setEditingAll) setEditingAll(true)
-    mutate(`/api/v1/${route}`)
+    if(!bulk) {
+      await fetch(`/api/v1/${route}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name }),
+        credentials: "include"
+      })
+      setListName("")
+      if(setEditingAll) setEditingAll(true)
+      mutate(`/api/v1/${route}`)
+    } else {
+      await fetch(`/api/v1/${route}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ bulkList }),
+        credentials: "include"
+      })
+      setBulkList("")
+      if(setEditingAll) setEditingAll(false)
+      mutate(`/api/v1/${route}`)
+    }
   }
 
   return (
     <div>
       <form onSubmit={handleSubmit}>
-        <input className={`text ${adding ? 'show' : ''}`} placeholder={placeholder} value={name} onChange={handleChange} autoComplete="off" type='text' />
+        {!bulk ? (
+          <input className={`text ${adding ? 'show' : ''}`} placeholder={placeholder} value={name} onChange={handleChange} autoComplete="off" type='text' />) : (
+            <input className={`textarea ${adding ? 'show' : ''}`} placeholder='long list of items' value={bulkList} onChange={handleChange} autoComplete="off" type='textarea' />
+        )}
+        <input
+          id="bulkCheckbox"
+          type="checkbox"
+          onChange={() => {setBulk(!bulk)}}
+          checked={bulk}
+          className={adding ? 'show-check' : 'hide-check'}
+        />
+        <label htmlFor="bulkCheckbox" className={adding ? 'show-check' : 'hide-check'}>Bulk?</label>
       </form>
       <style jsx>
         {`
@@ -41,9 +71,27 @@ const AddForm: React.FC<Props> = (props) => {
           align-self: center;
         }
 
+        label {
+          font-family: inherit;
+          font-size: 14px;
+        }
+
         img {
           width: 27px;
           height: 27px;
+        }
+
+        input[type='checkbox'] {
+          margin-left: 1rem;
+          accent-color: black;
+        }
+
+        .show-check {
+          display: inline
+        }
+
+        .hide-check {
+          display: none;
         }
 
         button {

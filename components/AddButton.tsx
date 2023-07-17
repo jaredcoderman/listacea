@@ -6,11 +6,12 @@ export type Props = {
   route: string;
   placeholder: string;
   setEditingAll: React.Dispatch<React.SetStateAction<boolean>> | null;
+  bulkOption: boolean;
 };
 
 const AddButton: React.FC<Props> = (props) => {
   const [adding, setAddingList] = useState(false)
-  const { imgSrc, route, placeholder, setEditingAll } = props
+  const { imgSrc, route, placeholder, setEditingAll, bulkOption } = props
   const handleClick = event => {
     setAddingList(!adding)
   }
@@ -20,7 +21,7 @@ const AddButton: React.FC<Props> = (props) => {
       <button onClick={handleClick}>
         <img src={`/images/${imgSrc}`}/>
       </button>
-      <AddForm setEditingAll={setEditingAll} placeholder={placeholder} adding={adding} route={route} />
+      <AddForm bulkOption={bulkOption} setEditingAll={setEditingAll} placeholder={placeholder} adding={adding} route={route} />
       <style jsx>
         {`
         img {
