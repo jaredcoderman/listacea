@@ -118,6 +118,10 @@ const Recipes = () => {
               z-index: 0
             }
 
+            .recipe:hover {
+              transform: translate(0, -3px);
+            }
+
             img {
               height: 18px;
               width: 18px;

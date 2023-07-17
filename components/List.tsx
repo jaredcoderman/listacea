@@ -141,8 +141,6 @@ const List: React.FC<Props> = (props) => {
             }
 
             div:hover {
-              background-color: black;
-              color: white;
               transform: translate(0, -3px);
             }
 
