@@ -115,7 +115,8 @@ const Recipes = () => {
               width: 250px;
               text-align: left;
               margin: 5px;
-              z-index: 0
+              z-index: 0;
+              transition: .25s;
             }
 
             .recipe:hover {
