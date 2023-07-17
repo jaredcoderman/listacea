@@ -19,6 +19,7 @@ const Layout: React.FC<Props> = (props) => (
         --bg: #ffffff;
         --secondary-button-bg: #e5c6b3;
         --main-button-color: #000000;
+        --accent: #34ada1;
         --color: #010504;
       }
 

@@ -121,6 +121,7 @@ const Item: React.FC<Props> = (props) => {
           height: 20px;
           vertical-align: middle;
           cursor: pointer;
+          margin-bottom: 2px;
         }
 
         .delete {
@@ -150,6 +151,8 @@ const Item: React.FC<Props> = (props) => {
 
         span {
           margin-left: .25rem;
+          font-size: 16px;
+        
         }
       `}
       </style>

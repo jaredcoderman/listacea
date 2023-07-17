@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import Link from "next/link"
 import React, { useState, useEffect, useRef } from "react"
 import { mutate } from "swr"
@@ -5,6 +6,7 @@ import { mutate } from "swr"
 export type ListProps = {
   name: string;
   id: number;
+  ownerEmail: string;
 }
 
 type Props = {
@@ -13,12 +15,14 @@ type Props = {
 }
 
 const List: React.FC<Props> = (props) => {
+  const { data: session, status } = useSession()
   const { list, editingLists } = props
   const [editing, setEditing] = useState(false)
   const [rename, setRename] = useState(list.name)
   const inputRef = useRef(null)
 
   const handleEdit = (e) => {
+    if(session.user.email !== list.ownerEmail) return
     if(editingLists) {
       e.preventDefault()
       setEditing(!editing)
@@ -49,19 +53,38 @@ const List: React.FC<Props> = (props) => {
     }
   }
 
-  const handleDelete = async (e) => {
+  const handleDelete = async (e) => { 
     e.preventDefault()
-    const verify = confirm("Are you sure you want to delete this list? It will also delete all associated categories and items.")
+    e.stopPropagation()
+    let verifyMessage = session.user.email === list.ownerEmail ? 'Are you sure you want to delete this list? It will also delete all associated categories and items.' : 'Are you sure you want to leave this list? You can be added back later.'
+    const verify = confirm(verifyMessage)
     if(!verify) return
-    try {
-      let response = await fetch(`/api/v1/list/${list.id}`, {
-        method: "DELETE"
-      })
-      if(!response.ok) throw new Error(`${response.status} (${response.statusText})`)
-      mutate("/api/v1/list")
-    } catch(err) {
-      console.error(err)
+    if(session.user.email === list.ownerEmail) {
+      try {
+        let response = await fetch(`/api/v1/list/${list.id}`, {
+          method: "DELETE"
+        })
+        if(!response.ok) throw new Error(`${response.status} (${response.statusText})`)
+        mutate("/api/v1/list")
+      } catch(err) {
+        console.error(err)
+      }
+    } else {
+      try {
+        let userToDelete = session.user.email
+        let response = await fetch(`/api/v1/list/${list.id}`, {
+          method: "PATCH",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userToDelete }),
+          credentials: "include"
+        })
+        if(!response.ok) throw new Error(`${response.status} (${response.statusText})`)
+        mutate("/api/v1/list")
+      } catch(err) {
+        console.error(err)
+      }
     }
+
   }
 
   useEffect(() => {
@@ -80,7 +103,7 @@ const List: React.FC<Props> = (props) => {
 
   return (
     <Link href={`./list/${list.id}`} className="link">
-      <div onClick={handleEdit} className={editing ? 'editing' : ''}>
+      <div onClick={handleEdit} className={(session.user.email === list.ownerEmail ? 'ownedList ' : '') + (editing ? 'editing' : '')}>
         {editing ? (
           <form onSubmit={handleSubmit}>
             <input
@@ -95,7 +118,7 @@ const List: React.FC<Props> = (props) => {
         ) : (
           <span>{rename}</span>
         )}
-        {editingLists && <img src="/images/bin.png" onClick={handleDelete}/>}
+        {editingLists && <img src={`/images/${session.user.email === list.ownerEmail ? 'bin' : 'logout'}.png`} className={session.user.email === list.ownerEmail ? 'bin' : 'leave'} onClick={(e) => handleDelete(e)}/>}
         <style jsx>
           {`
             form {
@@ -103,12 +126,22 @@ const List: React.FC<Props> = (props) => {
               display: inline;
             }
 
-            img {
+            .bin {
               height: 18px;
               width: 18px;
               vertical-align: middle;
               float: right;
               margin-right: 8px;
+              margin-top: 2px;
+              z-index: 1
+            }
+
+            .leave {
+              height: 18px;
+              width: 18px;
+              vertical-align: middle;
+              float: right;
+              margin-right: 11px;
               margin-top: 2px;
               z-index: 1
             }
@@ -138,6 +171,10 @@ const List: React.FC<Props> = (props) => {
               margin: 5px;
               z-index: 0;
               transition: .25s;
+            }
+
+            .ownedList {
+              background-color: var(--accent);
             }
 
             div:hover {
