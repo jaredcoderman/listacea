@@ -81,7 +81,7 @@ const ListShow = (props) => {
         </div>
         {categoryMap}
         {categories && <AddButton setEditingAll={setEditingAll} placeholder="new category" imgSrc="new-category.png" route={`list/${id}/category`}/>}
-        <hr></hr>
+
       </div>
       <style jsx>
       {`
