@@ -141,7 +141,7 @@ const List: React.FC<Props> = (props) => {
               width: 18px;
               vertical-align: middle;
               float: right;
-              margin-right: 11px;
+              margin-right: 9.5px;
               margin-top: 2px;
               z-index: 1
             }
