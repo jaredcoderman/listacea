@@ -1,4 +1,5 @@
 # Listacea
+https://www.listacea.com
 
 ## Idea
 Listacea was born because my mom wanted a better way to handle keep track of groceries for the family. I wanted to learn NextJS and it gave me the boost of motivation to do that.
