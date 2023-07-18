@@ -56,14 +56,15 @@ const AddForm: React.FC<Props> = (props) => {
           <input className={`text ${adding ? 'show' : ''}`} placeholder={placeholder} value={name} onChange={handleChange} autoComplete="off" type='text' />) : (
             <input className={`textarea ${adding ? 'show' : ''}`} placeholder='long list of items' value={bulkList} onChange={handleChange} autoComplete="off" type='textarea' />
         )}
-        <input
+        {bulkOption && <input
           id="bulkCheckbox"
           type="checkbox"
           onChange={() => {setBulk(!bulk)}}
           checked={bulk}
           className={adding ? 'show-check' : 'hide-check'}
-        />
-        <label htmlFor="bulkCheckbox" className={adding ? 'show-check' : 'hide-check'}>Bulk?</label>
+        />}
+
+        {bulkOption && <label htmlFor="bulkCheckbox" className={adding ? 'show-check' : 'hide-check'}>Bulk?</label>}
       </form>
       <style jsx>
         {`

@@ -36,7 +36,7 @@ async function makeCategoriesForItems(listNames) {
                         type: 'string',
                         item: 'the item for the category'
                       },
-                      description: 'a category that was created for a set of items in the list. no category has the same item. each item should have a category. Categories should be broad'
+                      description: 'a category that was created for a set of items in the list. no category has the same item. each item should have a category.'
                     },
                     description: 'a list of categories that contains items from the list. no category has the same item. each item should have a category. Categories should be broad'
                   }

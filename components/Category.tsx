@@ -206,7 +206,7 @@ const Category: React.FC<Props> = (props) => {
                 margin-bottom: .5rem;
                 cursor: pointer;
                 text-align: left;
-                width: 350px;
+                width: 250px;
                 z-index: 0
               }
 

@@ -15,7 +15,7 @@ const Header: React.FC = () => {
     <div className="left">
       <Link legacyBehavior href={activePath}>
         <a className="bold" data-active={isActive(activePath)}>
-          listacea
+          Lists
         </a>
       </Link>
       <style jsx>{`
@@ -47,7 +47,7 @@ const Header: React.FC = () => {
       <div className="left">
         <Link legacyBehavior href={activePath}>
           <a className="bold" data-active={isActive(activePath)}>
-            listacea
+            Lists
           </a>
         </Link>
         <style jsx>{`
@@ -124,7 +124,7 @@ const Header: React.FC = () => {
       <div className="left">
         <Link legacyBehavior href={activePath}>
           <a className="bold" data-active={isActive(activePath)}>
-            listacea
+            Lists
           </a>
         </Link>
         <style jsx>{`
@@ -157,7 +157,7 @@ const Header: React.FC = () => {
         </Link>
         <span>{session.user.email}</span>
         <button className='button' onClick={() => signOut()}>
-          <a>Log out</a>
+          <a>Logout</a>
         </button>
         <style jsx>{`
           a {
@@ -177,15 +177,21 @@ const Header: React.FC = () => {
             padding-right: 1rem;
           }
 
+          a + a {
+            margin-left: 1rem;
+          }
+
             @media only screen and (max-width: 800px) {
               span {
                 display: none;
               }
+
+              a + a {
+                margin-left: 5rem;
+              }
             }
 
-          a + a {
-            margin-left: 1rem;
-          }
+
 
           .right {
             margin-left: auto;
@@ -228,6 +234,12 @@ const Header: React.FC = () => {
           display: flex;
           padding: 2rem;
           align-items: center;
+        }
+
+        @media only screen and (max-width: 800px) {
+          nav {
+            padding: 2em .5em;
+          }
         }
       `}</style>
     </nav>
