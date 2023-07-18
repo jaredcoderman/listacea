@@ -82,7 +82,7 @@ const ListShow = (props) => {
         <div className='category-container'>
           {categoryMap}
         </div>
-        {categories && <AddButton bulkOption={true} setEditingAll={setEditingAll} placeholder="new category" imgSrc="new-category.png" route={`list/${id}/category`}/>}
+        {categories && <AddButton bulkOption={false} setEditingAll={setEditingAll} placeholder="new category" imgSrc="new-category.png" route={`list/${id}/category`}/>}
 
       </div>
       <style jsx>
