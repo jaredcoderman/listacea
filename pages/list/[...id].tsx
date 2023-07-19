@@ -6,6 +6,7 @@ import AddButton from "../../components/AddButton"
 import Category from "../../components/Category"
 import { useSession } from "next-auth/react"
 import LoadingSpinner from "../../components/LoadingSpinner"
+import ShareModal from "../../components/ShareModal"
 
 export type List = {
   id: number
@@ -41,6 +42,7 @@ const ListShow = (props) => {
 
   const [editingAll, setEditingAll] = useState(false)
   const [responseMessage, setResponseMessage] = useState("")
+  const[modalOpen, setModalOpen] = useState(false)
 
   const url = id ? `/api/v1/list/${id}` : null
   const { data: list } = useSWR(url, fetchList)
@@ -52,21 +54,12 @@ const ListShow = (props) => {
   }) : null
 
   const handleShare = async () => {
-    const email = prompt("Enter the user's email address")
-    if(!email) return
-    try {
-      const response = await fetch(`/api/v1/list/${id}`, {
-        method: "PATCH",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-        credentials: "include"
-      })
-      if(!response.ok) throw new Error(`${response.status} (${response.statusText})`)
-      const responseBody = await response.json()
-      setResponseMessage(responseBody.message)
-    } catch(err) {
-      console.error(err)
-    }
+    setModalOpen(!modalOpen)
+  }
+
+  let isOwner = false
+  if(list && session) {
+    if(list.ownerEmail === session.user.email) isOwner = true
   }
 
   return (
@@ -74,7 +67,7 @@ const ListShow = (props) => {
       <div>
         {!list && <LoadingSpinner />}
         <h1>{list && list.name}</h1>
-        <span className={responseMessage.includes("not") ? "error" : "success"}>{responseMessage}</span>
+        {list && modalOpen && <ShareModal isOwner={isOwner} list={list} setModalOpen={setModalOpen} users={list.users} />}
         <div className="menu">
           {categories && categories.length > 0 && <img onClick={() => setEditingAll(!editingAll)} className="edit-button" src={editingAll ? "/images/editing.png": '/images/edit.png'} />}
           {categories && <img onClick={handleShare} src="/images/share.png" />}
@@ -91,6 +84,7 @@ const ListShow = (props) => {
           display: flex;
         }
         div {
+          position: relative;
           display: flex;
           justify-content: center;
           align-items: center;

@@ -11,6 +11,20 @@ export default async function handle(req, res) {
       const list = await prisma.list.findUnique({
         where: {
           id: parseInt(listId, 10)
+        },
+        include: {
+          users: {
+            include: {
+              user: {
+                select: {
+                  name: true,
+                  email: true,
+                  id: true,
+                  image: true
+                }
+              }
+            }
+          }
         }
       })
       return res.json({ list: list })
@@ -65,8 +79,20 @@ export default async function handle(req, res) {
             email: email
           }
         })
-
         if(userToAdd) {
+          const listsUsersIn = await prisma.listToUser.findMany({
+            where: {
+              userId: userToAdd.id
+            }
+          })
+          let isInList = false
+          listsUsersIn.forEach(list => {
+            if(list.listId === parseInt(listId, 10)) isInList = true;
+          })
+          if(isInList) {
+            return res.json({message: "Error: User is already in this list"})
+          }
+
           await prisma.list.update({
             where: {
               id: parseInt(listId, 10)
@@ -81,7 +107,7 @@ export default async function handle(req, res) {
           })
           return res.json({message: "User added successfully"})
         } else {
-          return res.json({message: `User with email "${email}" does not exist`})
+          return res.json({message: `Error: email "${email}" does not exist`})
         }
       } catch(err) {
         console.error(err)
