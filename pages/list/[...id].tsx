@@ -7,6 +7,8 @@ import Category from "../../components/Category"
 import { useSession } from "next-auth/react"
 import LoadingSpinner from "../../components/LoadingSpinner"
 import ShareModal from "../../components/ShareModal"
+import { DndProvider } from 'react-dnd-multi-backend'
+import { HTML5toTouch } from 'rdndmb-html5-to-touch' // or any other pipeline
 
 export type List = {
   id: number
@@ -73,7 +75,10 @@ const ListShow = (props) => {
           {categories && <img onClick={handleShare} src="/images/share.png" />}
         </div>
         <div className='category-container'>
-          {categoryMap}
+          <DndProvider options={HTML5toTouch}>
+            {categoryMap}
+          </DndProvider>
+
         </div>
         {categories && <AddButton bulkOption={false} setEditingAll={setEditingAll} placeholder="new category" imgSrc="new-category.png" route={`list/${id}/category`}/>}
 

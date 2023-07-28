@@ -58,7 +58,7 @@ const Item: React.FC<Props> = (props) => {
   }
 
   const handleRename = (e) => {
-    if(e.currentTarget.value.length > 20) return
+    if(e.currentTarget.value.length > 30) return
     setRename(e.currentTarget.value)
   }
 

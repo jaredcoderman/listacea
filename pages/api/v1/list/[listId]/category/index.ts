@@ -9,23 +9,36 @@ export default async function handle(req, res) {
   if (req.method === "POST") {
     const { name, bulkList } = req.body;
     if(name) {
+      const list = await prisma.list.findUnique({
+        where: {
+          id: parseInt(listId, 10)
+        },
+        include: {
+          categories: true
+        }
+      })
+      const newIndex = list.categories.length + 1
       const result = await prisma.category.create({
         data: {
           name: name,
-          list: { connect: { id: parseInt(listId, 10) } }
+          list: { connect: { id: parseInt(listId, 10) } },
+          index: newIndex
         },
       });
       res.status(204).send()
     }
     if(bulkList) {
-      console.log("making categories")
+      console.log("Making categories..")
       const response = await makeCategoriesForItems(bulkList)
       console.log(response.categories)
-      response.categories.forEach(async (category) => {
+      response.categories.forEach(async (category, index) => {
+        const newIndex = index + 1
+        console.log(category.name)
         const newCategory = await prisma.category.create({
           data: {
             name: category.name,
-            list: { connect: { id: parseInt(listId, 10) } }
+            list: { connect: { id: parseInt(listId, 10) } },
+            index: newIndex
           },
         })
         category.items.forEach(async (item) => {
@@ -62,7 +75,7 @@ export default async function handle(req, res) {
             }
           },
           orderBy: {
-            id: "asc"
+            index: "asc"
           }
         });
         res.json({ categories });
@@ -71,5 +84,4 @@ export default async function handle(req, res) {
       }      
     }
   }
-
 }

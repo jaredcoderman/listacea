@@ -33,11 +33,12 @@ const AddButton: React.FC<Props> = (props) => {
           border: none;
           display: inline;
           background-color: transparent;
+          padding: 0 8px 0 0;
         }
         div {
           display: flex;
           justify-content: center;
-          margin-top: 4rem;
+          margin: 4rem auto 0 auto;
         }
         `}
       </style>

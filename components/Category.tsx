@@ -1,15 +1,17 @@
-import Link from "next/link"
 import React, { useState, useEffect, useRef } from "react"
 import { mutate } from "swr"
 import { ListProps } from "./List"
 import { ItemProps } from "./Item"
 import Item from "./Item"
+import { useDrag, useDrop } from "react-dnd"
+import { ItemTypes } from "../utils/constants"
 
 export type CategoryProps = {
   name: string;
   items: ItemProps[];
   id: number;
   listId: number;
+  index: number;
 }
 
 type Props = {
@@ -23,6 +25,36 @@ const Category: React.FC<Props> = (props) => {
   const [editing, setEditing] = useState(false)
   const [newItem, setNewItem] = useState("")
   const inputRef = useRef(null)
+  const [{isDragging}, drag] = useDrag(() => ({
+    type: ItemTypes.CATEGORY,
+    item: {category: category},
+    collect: monitor => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }))
+
+  const [{ isOver }, drop] = useDrop(
+    () => ({
+      accept: ItemTypes.CATEGORY,
+      drop: (category) => handleDrop(category),
+      collect: (monitor) => ({
+        isOver: !!monitor.isOver()
+      })
+    }),
+  )
+  
+  const handleDrop = async (draggedData) => {
+    const draggedCategory = draggedData.category
+    const draggedCategoryId = draggedCategory.id;
+    await fetch(`/api/v1/list/${category.listId}/category/${category.id}`, {
+      method: "PATCH",
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ draggedCategoryId }),
+      credentials: 'include',
+    });
+    mutate(`/api/v1/list/${category.listId}/category`);
+  };
+  
 
   const handleEdit = (e) => {
     e.preventDefault()
@@ -109,119 +141,131 @@ const Category: React.FC<Props> = (props) => {
   }, []);
 
   return (
-      <div className="outer">
-        <div className={"category-container " + (editing ? 'editing' : '')}>
-          {editing ? (
-            <form className={'edit-form ' + (editing ? 'editing-form' : '')} onSubmit={handleSubmit}>
-              <input
-                type="text"
-                className='category-field'
-                value={rename}
-                ref={inputRef}
-                onChange={handleRename}
-                autoFocus
-                onClick={(e) => e.preventDefault()}
-              />
+      <div
+        ref={drop}
+      >
+          <div
+            ref={drag}
+            className="outer"
+            style={{
+              opacity: isDragging ? 0.5 : 1,
+              fontSize: 25,
+              fontWeight: 'bold',
+              cursor: 'move',
+            }}
+          >
+          <div className={"category-container " + (editing ? 'editing' : '')}>
+            {editing ? (
+              <form className={'edit-form ' + (editing ? 'editing-form' : '')} onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  className='category-field'
+                  value={rename}
+                  ref={inputRef}
+                  onChange={handleRename}
+                  autoFocus
+                  onClick={(e) => e.preventDefault()}
+                />
+              </form>
+            ) : (
+              <span className={editing ? 'editing' : ''} onClick={(e) => handleEdit(e)}>{rename}</span>
+            )}
+            {editingAll && <img src="/images/bin.png" onClick={handleDelete}/>}
+          </div>
+          {itemMap}
+          {editingAll && (
+            <form className="new-item-form" onSubmit={handleNewItemSubmit}>
+              <input onChange={handleNewItem} value={newItem} placeholder="new.." className="new-item" type="text" />
             </form>
-          ) : (
-            <span className={editing ? 'editing' : ''} onClick={(e) => handleEdit(e)}>{rename}</span>
           )}
-          {editingAll && <img src="/images/bin.png" onClick={handleDelete}/>}
-        </div>
-        {itemMap}
-        {editingAll && (
-          <form className="new-item-form" onSubmit={handleNewItemSubmit}>
-            <input onChange={handleNewItem} value={newItem} placeholder="new.." className="new-item" type="text" />
-          </form>
-        )}
-        <style jsx>
-            {`
-              .edit-form {
-                width: 100%;
-                display: inline;
-              }
+          <style jsx>
+              {`
+                .edit-form {
+                  width: 100%;
+                  display: inline;
+                }
 
-              .editing-form {
-                border-color: orange;
-                outline: 1px solid orange;
-                box-shadow: 0 0 5px orange;
-                background-color: white;
-                border-radius: 3px;
-                padding-left: 4px;
-                padding-bottom: 2px; 
-              }
+                .editing-form {
+                  border-color: orange;
+                  outline: 1px solid orange;
+                  box-shadow: 0 0 5px orange;
+                  background-color: white;
+                  border-radius: 3px;
+                  padding-left: 4px;
+                  padding-bottom: 2px; 
+                }
 
-              .outer {
-                margin-bottom: 2rem;
-              }
+                .outer {
+                  margin-bottom: 2rem;
+                }
 
-              img {
-                height: 18px;
-                width: 18px;
-                float: right;
-                margin-top: 9px;
-                margin-left: 1rem;
-                vertical-align: middle;
-              }
+                img {
+                  height: 18px;
+                  width: 18px;
+                  float: right;
+                  margin-top: 9px;
+                  margin-left: 1rem;
+                  vertical-align: middle;
+                }
 
-              .category-field {
-                border: none;
-                background-color: transparent;
-                font-weight: bold;
-                display: inline;
-                padding: 0;
-                font-family: inherit;
-                font-size: 24px;
-              }
+                .category-field {
+                  border: none;
+                  background-color: transparent;
+                  font-weight: bold;
+                  display: inline;
+                  padding: 0;
+                  font-family: inherit;
+                  font-size: 24px;
+                }
 
-              .category-field:focus {
-                outline: none;
-              }
+                .category-field:focus {
+                  outline: none;
+                }
 
-              .new-item-form {
-                margin-top: 1rem;
-              }
+                .new-item-form {
+                  margin-top: 1rem;
+                }
 
-              .new-item {
-                opacity: .8;
-                border: none;
-                width: 55%;
-                border-bottom: solid 1px black;
-                border-radius: 3px;
-                outline: none;
-                color: black;
-                background-color: transparent;
-              }
+                .new-item {
+                  opacity: .8;
+                  border: none;
+                  width: 55%;
+                  border-bottom: solid 1px black;
+                  border-radius: 3px;
+                  outline: none;
+                  color: black;
+                  background-color: transparent;
+                }
 
-              .new-item:focus {
-                opacity: 1;
-              }
+                .new-item:focus {
+                  opacity: 1;
+                }
 
-              img:hover {
-                color: white;
-              }
+                img:hover {
+                  color: white;
+                }
 
-              .category-container {
-                border-radius: 5px;
-                margin-bottom: .5rem;
-                cursor: pointer;
-                text-align: left;
-                width: 250px;
-                z-index: 0
-              }
+                .category-container {
+                  border-radius: 5px;
+                  margin-bottom: .5rem;
+                  cursor: pointer;
+                  text-align: left;
+                  width: 250px;
+                  z-index: 0
+                }
 
-              .editing {
-                display: flex;
-              }
+                .editing {
+                  display: flex;
+                }
 
-              span {
-                font-weight: bold;
-                font-size: 24px;
-              }
-            `}
-          </style>
-      </div>
-      
+                span {
+                  font-weight: bold;
+                  font-size: 24px;
+                }
+              `}
+            </style>
+        </div>       
+      </div>  
   )
 }
 

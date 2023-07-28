@@ -36,7 +36,8 @@ export default async function handle(req, res) {
         }
       })
       return res.json({ lists: lists })
+    } else {
+      return res.status(204).send()
     }
   }
-  return res.status(204).send()
 }

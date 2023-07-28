@@ -27,6 +27,7 @@ model Category {
   name String @db.VarChar(20)
   list List? @relation(fields: [listId], references: [id], onDelete: Cascade)
   listId Int?
+  index Int? @default(0)
   items Item[]
 }
 
