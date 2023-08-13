@@ -33,11 +33,12 @@ const ShareModal: React.FC<Props> = (props) => {
 
   const addUser = async (e) => {
     e.preventDefault()
+    let lowerEmail = email.toLowerCase()
     try {
       const response = await fetch(`/api/v1/list/${list.id}`, {
         method: "PATCH",
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ email: lowerEmail }),
         credentials: "include"
       })
       if(!response.ok) throw new Error(`${response.status} (${response.statusText})`)

@@ -153,13 +153,22 @@ const Header: React.FC = () => {
         <Link legacyBehavior href="/recipes">
           <a className="recipe-button" data-active={isActive("/recipes")}>
             Recipes
-        </a>
+          </a>
         </Link>
+        {/* <img src="/images/bell.png" className='bell'/> */}
         <span>{session.user.email}</span>
         <button className='button' onClick={() => signOut()}>
           <a>Logout</a>
         </button>
         <style jsx>{`
+
+          .bell {
+            width: 32px;
+            height: 32px;
+            vertical-align: middle;
+            margin-right: 1rem;
+            cursor: pointer;
+          }
           a {
             text-decoration: none;
             color: var(--geist-foreground);
@@ -181,17 +190,15 @@ const Header: React.FC = () => {
             margin-left: 1rem;
           }
 
-            @media only screen and (max-width: 800px) {
-              span {
-                display: none;
-              }
-
-              a + a {
-                margin-left: 5rem;
-              }
+          @media only screen and (max-width: 800px) {
+            span {
+              display: none;
             }
 
-
+            a + a {
+              margin-left: 5rem;
+            }
+          }
 
           .right {
             margin-left: auto;
@@ -219,7 +226,6 @@ const Header: React.FC = () => {
             background-color: transparent;
           }
 
-          .button 
         `}</style>
       </div>
     );
