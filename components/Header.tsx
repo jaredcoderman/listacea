@@ -3,6 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { signOut, useSession } from 'next-auth/react';
+import Bell from "./Bell"
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -155,20 +156,12 @@ const Header: React.FC = () => {
             Recipes
           </a>
         </Link>
-        {/* <img src="/images/bell.png" className='bell'/> */}
+        {/* <Bell /> */}
         <span>{session.user.email}</span>
         <button className='button' onClick={() => signOut()}>
           <a>Logout</a>
         </button>
         <style jsx>{`
-
-          .bell {
-            width: 32px;
-            height: 32px;
-            vertical-align: middle;
-            margin-right: 1rem;
-            cursor: pointer;
-          }
           a {
             text-decoration: none;
             color: var(--geist-foreground);

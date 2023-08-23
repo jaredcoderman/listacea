@@ -105,7 +105,7 @@ const Category: React.FC<Props> = (props) => {
   })
 
   const handleNewItem = e => {
-    if(e.currentTarget.value.length > 20) return
+    if(e.currentTarget.value.length > 50) return
     setNewItem(e.currentTarget.value)
   }
 

@@ -93,6 +93,7 @@ export default async function handle(req, res) {
             return res.json({message: "Error: User is already in this list"})
           }
 
+          // Add user to the list
           await prisma.list.update({
             where: {
               id: parseInt(listId, 10)
@@ -101,6 +102,23 @@ export default async function handle(req, res) {
               users: {
                 create: [
                   { user: { connect: { email: email } } }
+                ]
+              }
+            }
+          })
+
+          // Notify added user
+          await prisma.user.update({
+            where: {
+              id: userToAdd.id
+            },
+            data: {
+              notifications: {
+                create: [
+                  {
+                    description: `${session.user.name} added you to their list "${list.name}"`,
+                    image: session.user.image
+                  }
                 ]
               }
             }

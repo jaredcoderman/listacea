@@ -137,7 +137,6 @@ const ShareModal: React.FC<Props> = (props) => {
         width: 275px;
         z-index: 9999;
         overflow-y: scroll;
-
       }
 
       h3 {

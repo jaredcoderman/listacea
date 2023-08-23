@@ -58,7 +58,7 @@ const Item: React.FC<Props> = (props) => {
   }
 
   const handleRename = (e) => {
-    if(e.currentTarget.value.length > 30) return
+    if(e.currentTarget.value.length > 50) return
     setRename(e.currentTarget.value)
   }
 
@@ -97,6 +97,7 @@ const Item: React.FC<Props> = (props) => {
 
   return (
     <div>
+      {editingAll && <img className="delete" src="/images/bin.png" onClick={handleDelete}/>}
       <img onClick={handleClick} src={item.purchased ? "/images/checkbox.png" : "/images/unchecked.png"} />
       {editing ? (
             <form className={'edit-form ' + (editing ? 'editing-form' : '')} onSubmit={handleSubmit}>
@@ -113,7 +114,7 @@ const Item: React.FC<Props> = (props) => {
           ) : (
             <span className={editing ? 'editing' : ''} onClick={(e) => handleEdit(e)}>{rename}</span>
           )}
-      {editingAll && <img className="delete" src="/images/bin.png" onClick={handleDelete}/>}
+
       <style jsx>
       {`
         img {
@@ -122,17 +123,19 @@ const Item: React.FC<Props> = (props) => {
           vertical-align: middle;
           cursor: pointer;
           margin-bottom: 2px;
+          margin-right: .2rem;
         }
 
         .delete {
           width: 16px;
           height: 16px;
-          margin-left: 10px;
+          margin-top: 2px;
         }
 
         .edit-form {
           width: 100%;
           display: inline;
+          font-size: 16px;
         }
 
         .item-field {
@@ -141,7 +144,7 @@ const Item: React.FC<Props> = (props) => {
           box-shadow: 0 0 5px orange;
           background-color: white;
           display: inline;
-          padding-left: 3px;;
+          padding-left: 3px;
           font-family: inherit;
           font-size: 16px;
           margin-left: .25rem;
@@ -149,10 +152,18 @@ const Item: React.FC<Props> = (props) => {
           outline: none;
         }
 
+        .editing-form {
+          top: -5px;
+        }
+
         span {
           margin-left: .25rem;
           font-size: 16px;
-        
+          max-width: 200px;
+        }
+        div {
+          display: flex;
+          margin-top: 3px;
         }
       `}
       </style>

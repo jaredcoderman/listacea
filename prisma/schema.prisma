@@ -45,6 +45,7 @@ model List {
   id          Int          @id @default(autoincrement())
   createdAt   DateTime?    @default(now())
   name        String
+  changesNotified Boolean? @default(false)
   users       ListToUser[] 
   ownerEmail  String?
   categories  Category[]
@@ -61,16 +62,28 @@ model ListToUser {
   @@unique([listId, userId])
 }
 
+model Notification {
+  id        Int   @id @default(autoincrement())
+  description String
+  seen Boolean? @default(false)
+  createdAt  DateTime   @default(now())
+  image String?
+  user User @relation(fields: [userId], references: [id])
+  userId String
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String?
-  email         String?@unique
+  email         String?   @unique
   emailVerified DateTime?
-  image         String?
+  image         String? 
+  createdAt  DateTime   @default(now())
   accounts      Account[]
   sessions      Session[]
   recipes       Recipe[]
   lists         ListToUser[]
+  notifications Notification[]
 }
 
 model Account {
